@@ -1,5 +1,21 @@
 pragma solidity 0.4.23;
 
+
+contract LenderManagement {
+    mapping (address => lendingContract[]) public lendingContractsMapping;
+    
+    struct lendingContract {
+        string nodeType;
+        address lenderAddress;
+        address borrowerAddress;
+    }
+    
+    function createLendingContract (address borrowerAddress, uint split, string nodeType) {
+        address newLendingContract = new NodeLender(borrowerAddress, split);
+        newContracts.push(newContract);
+    } 
+}
+
 contract NodeLender {
 
     address public lender;
