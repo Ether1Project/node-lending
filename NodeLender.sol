@@ -7,6 +7,7 @@ contract NodeLender {
 
     uint public paymentThreshold;
     uint public lenderSplit;
+    uint public borrowerTxAllowance;
 
     // On Deployment - A Split of 10 Means 10% Lender Split
     constructor(address borrowerAddress, uint split) public {
@@ -14,6 +15,7 @@ contract NodeLender {
         borrower = borrowerAddress;
         lenderSplit = split;
         paymentThreshold = 100;
+        borrowerTxAllowance = 2;
     }
 
     function() payable external {
@@ -25,12 +27,26 @@ contract NodeLender {
         }
     }
 
+    // transfer allows lender to transfer any remaining contract balance(ie node collateral)
     function transfer(address to, uint value) public onlyLender returns (bool) {
         assert(address(this).balance >= value);
         to.transfer(value);
         return true;
     }
+    
+    // borrowerTransfer allows borrower to send a tx to verify node (must be less than 1 etho) 
+    function borrowerTransfer(address to, uint value) public onlyBorrower returns (bool) {
+        assert(address(this).balance >= value && value < (1 ether) && borrowerTxAllowance > 0);
+        borrowerTxAllowance--;
+        to.transfer(value);
+        return true;
+    }
 
+    // updateBorrowerTxAllowance allows lender to allocate borrower more tranfers
+    function updateBorrowerTxAllowance(uint allowance) public onlyLender() {
+        borrowerTxAllowance = allowance;
+    }
+    
     function updateThreshold(uint threshold) public onlyLender() {
         paymentThreshold = threshold;
     }
