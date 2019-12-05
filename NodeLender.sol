@@ -27,14 +27,14 @@ contract NodeLender {
         }
     }
 
-    // transfer allows lender to transfer any remaining contract balance(ie node collateral)
+    // transfer allows lender to transfer any remaining contract balance(ie node collateral) - value is in wei
     function transfer(address to, uint value) public onlyLender returns (bool) {
         assert(address(this).balance >= value);
         to.transfer(value);
         return true;
     }
     
-    // borrowerTransfer allows borrower to send a tx to verify node (must be less than 1 etho) 
+    // borrowerTransfer allows borrower to send a tx to verify node (must be less than 1 etho) - value is in wei
     function borrowerTransfer(address to, uint value) public onlyBorrower returns (bool) {
         assert(address(this).balance >= value && value < (1 ether) && borrowerTxAllowance > 0);
         borrowerTxAllowance--;
