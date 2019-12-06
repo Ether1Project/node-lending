@@ -31,9 +31,9 @@ contract LenderManagement {
     constructor() public {
         owner = msg.sender;
         lendingContractCount = 0;
-        gnCollateralRequirement = 30000;
-        mnCollateralRequirement = 15000;
-        snCollateralRequirement = 5000;
+        gnCollateralRequirement = 3;
+        mnCollateralRequirement = 2;
+        snCollateralRequirement = 1;
     }
     
     // This function is used to deploy a new lending contract
@@ -89,32 +89,32 @@ contract LenderManagement {
         snCollateralRequirement = requirement;
     }
     
-    function getLendingContractCount() public view returns (uint) {
-        return lenderCountMapping[msg.sender];
+    function getLendingContractCount(address userAddress) public view returns (uint) {
+        return lenderCountMapping[userAddress];
     }
     
-    function getBorrowerContractCount() public view returns (uint) {
-        return borrowerCountMapping[msg.sender];
+    function getBorrowerContractCount(address userAddress) public view returns (uint) {
+        return borrowerCountMapping[userAddress];
     }
     
-    function getContractAddress(uint index) public view returns (address) {
-        return lendingContractsMappingByLender[msg.sender][index].lendingContractAddress;
+    function getContractAddress(address userAddress, uint index) public view returns (address) {
+        return lendingContractsMappingByLender[userAddress][index].lendingContractAddress;
     }
     
-    function getContractNodeType(uint index) public view returns (string) {
-        return lendingContractsMappingByLender[msg.sender][index].nodeType;
+    function getContractNodeType(address userAddress, uint index) public view returns (string) {
+        return lendingContractsMappingByLender[userAddress][index].nodeType;
     }
     
-    function getContractBorrowerAddress(uint index) public view returns (address) {
-        return lendingContractsMappingByLender[msg.sender][index].borrowerAddress;
+    function getContractBorrowerAddress(address userAddress, uint index) public view returns (address) {
+        return lendingContractsMappingByLender[userAddress][index].borrowerAddress;
     }
     
-    function getContractLenderSplit(uint index) public view returns (uint) {
-        return NodeLender(lendingContractsMappingByLender[msg.sender][index].lendingContractAddress).getLenderSplit();
+    function getContractLenderSplit(address userAddress, uint index) public view returns (uint) {
+        return NodeLender(lendingContractsMappingByLender[userAddress][index].lendingContractAddress).getLenderSplit();
     }
     
-    function getContractCollateralAmount(uint index) public view returns (uint) {
-        return NodeLender(lendingContractsMappingByLender[msg.sender][index].lendingContractAddress).getCollateralAmount();
+    function getContractCollateralAmount(address userAddress, uint index) public view returns (uint) {
+        return NodeLender(lendingContractsMappingByLender[userAddress][index].lendingContractAddress).getCollateralAmount();
     }
     
     // Start remote contract interactions
