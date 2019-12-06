@@ -1,19 +1,67 @@
 pragma solidity 0.4.23;
 
-
 contract LenderManagement {
-    mapping (address => lendingContract[]) public lendingContractsMapping;
+    mapping (address => mapping(uint => lendingContract)) public lendingContractsMappingByLender;
+    mapping (address => mapping(uint => lendingContract)) public lendingContractsMappingByBorrower;
+    mapping(address => uint) lenderCountMapping;
+    mapping(address => uint) borrowerCountMapping;
+    
+    mapping(address => lendingContract) public lendingContractMapping;
+    mapping(uint => lendingContract) public lendingContractCountMapping;
+    
+    uint lendingContractCount;
     
     struct lendingContract {
         string nodeType;
+        uint index;
+        uint lenderIndex;
+        uint borrowerIndex;
         address lenderAddress;
         address borrowerAddress;
+        address lendingContractAddress;
+        bool available;
     }
     
-    function createLendingContract (address borrowerAddress, uint split, string nodeType) {
-        address newLendingContract = new NodeLender(borrowerAddress, split);
-        newContracts.push(newContract);
+    constructor() public {
+        lendingContractCount = 0;
+    }
+    
+    // This function is used to deploy a new lending contract
+    function createLendingContract (uint split, string nodeType) public {
+        assert(keccak256(nodeType) == keccak256("GN") || keccak256(nodeType) == keccak256("MN") || keccak256(nodeType) == keccak256("SN"));
+        
+        address newLendingContract = new NodeLender(split);
+        
+        lendingContract memory newContract = lendingContract({nodeType:nodeType, index:lendingContractCount, lenderIndex:lenderCountMapping[msg.sender], borrowerIndex:0, lenderAddress:msg.sender, borrowerAddress:msg.sender, lendingContractAddress:newLendingContract, available:true});
+        lendingContractsMappingByLender[msg.sender][lenderCountMapping[msg.sender]] = newContract;
+        lenderCountMapping[msg.sender]++;
+        
+        lendingContractMapping[newLendingContract] = newContract;
+        lendingContractCountMapping[lendingContractCount] = newContract;
+        lendingContractCount++;
     } 
+    
+    // This function is used for a borrower to select an available contract
+    function borrowerContractSelection(address contractAddress) public {
+        assert(lendingContractMapping[contractAddress].available == true);
+        
+        address lenderAddress = lendingContractMapping[contractAddress].lenderAddress;
+        uint lenderIndex = lendingContractMapping[contractAddress].lenderIndex;
+        lendingContractsMappingByLender[lenderAddress][lenderIndex].available == false; 
+        lendingContractsMappingByLender[lenderAddress][lenderIndex].borrowerAddress == msg.sender;
+        lendingContractsMappingByLender[lenderAddress][lenderIndex].borrowerIndex == borrowerCountMapping[msg.sender];
+        
+        uint mainIndex = lendingContractMapping[contractAddress].index;
+        lendingContractCountMapping[mainIndex].available == false;
+        lendingContractCountMapping[mainIndex].borrowerAddress == msg.sender;
+        lendingContractCountMapping[mainIndex].borrowerIndex == borrowerCountMapping[msg.sender];
+        
+        lendingContractMapping[contractAddress].available == false;
+        lendingContractMapping[contractAddress].borrowerAddress == msg.sender;
+        lendingContractMapping[contractAddress].borrowerIndex == borrowerCountMapping[msg.sender];
+        
+        lendingContractsMappingByBorrower[msg.sender][borrowerCountMapping[msg.sender]] = lendingContractMapping[contractAddress];
+    }
 }
 
 contract NodeLender {
@@ -26,9 +74,8 @@ contract NodeLender {
     uint public borrowerTxAllowance;
 
     // On Deployment - A Split of 10 Means 10% Lender Split
-    constructor(address borrowerAddress, uint split) public {
+    constructor(uint split) public {
         lender = msg.sender;
-        borrower = borrowerAddress;
         lenderSplit = split;
         paymentThreshold = 100;
         borrowerTxAllowance = 2;
