@@ -39,13 +39,13 @@ contract LenderManagement {
     
     // This function is used to deploy a new lending contract - fee is desired origination fee
     function createLendingContract (uint split, string nodeType, uint fee) public payable {
-        assert(keccak256(nodeType) == keccak256("GN") || keccak256(nodeType) == keccak256("MN") || keccak256(nodeType) == keccak256("SN"));
+        assert(keccak256(nodeType) == keccak256("GN") || keccak256(nodeType) == keccak256("MN") || keccak256(nodeType) == keccak256("SN") && fee >= 100);
 
         if(keccak256(nodeType) == keccak256("GN")){ assert(msg.value == (gnCollateralRequirement * (1 ether))); }
         else if(keccak256(nodeType) == keccak256("MN")){ assert(msg.value == (mnCollateralRequirement * (1 ether))); }
         else if(keccak256(nodeType) == keccak256("SN")){ assert(msg.value == (snCollateralRequirement * (1 ether))); }
         
-        address newLendingContract = new NodeLender(split, nodeType);
+        address newLendingContract = new NodeLender(split, nodeType, fee);
         
         lendingContract memory newContract = lendingContract({nodeType:nodeType, index:lendingContractCount, lenderIndex:lenderCountMapping[msg.sender], borrowerIndex:0, lenderAddress:msg.sender, borrowerAddress:msg.sender, lendingContractAddress:newLendingContract, originationFee:fee, available:true});
         lendingContractsMappingByLender[msg.sender][lenderCountMapping[msg.sender]] = newContract;
@@ -57,9 +57,9 @@ contract LenderManagement {
     } 
     
     // This function is used for a borrower to select an available contract
-    function borrowerContractSelection(address contractAddress) public {
-        assert(lendingContractMapping[contractAddress].available == true);
-        
+    function borrowerContractSelection(address contractAddress) public payable {
+        assert(lendingContractMapping[contractAddress].available == true && NodeLender(contractAddress).setBorrower.value(msg.value)(msg.sender));
+    
         address lenderAddress = lendingContractMapping[contractAddress].lenderAddress;
         uint lenderIndex = lendingContractMapping[contractAddress].lenderIndex;
         lendingContractsMappingByLender[lenderAddress][lenderIndex].available == false; 
@@ -78,42 +78,70 @@ contract LenderManagement {
         lendingContractsMappingByBorrower[msg.sender][borrowerCountMapping[msg.sender]] = lendingContractMapping[contractAddress];
     }
     
+    function calculateContractCost(address contractAddress) public view returns (uint) {
+         uint fees = NodeLender(contractAddress).getOriginationFee();
+         string memory nodeType =  lendingContractMapping[contractAddress].nodeType;
+         if(keccak256(nodeType) == keccak256("GN")) {
+             fees += gnCollateralRequirement;
+         } else if(keccak256(nodeType) == keccak256("MN")) {
+             fees += mnCollateralRequirement;
+         } else if(keccak256(nodeType) == keccak256("SN")) {
+             fees += snCollateralRequirement;
+         }
+         return (fees * (1 ether));
+    }
+
     function removeContract(uint index) public {
         address borrowerAddress = lendingContractsMappingByLender[msg.sender][index].borrowerAddress;
         uint borrowerIndex = lendingContractsMappingByLender[msg.sender][index].borrowerIndex;
         uint lenderIndex = lendingContractsMappingByLender[msg.sender][index].lenderIndex;
-        address contractAddress = lendingContractsMappingByLender[msg.sender][index].contractAddress;
+        address contractLookup = lendingContractsMappingByLender[msg.sender][index].lendingContractAddress;
         uint mainIndex = lendingContractsMappingByLender[msg.sender][index].index;
         
         uint lenderCount = lenderCountMapping[msg.sender];
         uint borrowerCount = borrowerCountMapping[borrowerAddress];
         
-        rotateLastLenderContract(msg.sender, lenderIndex, lenderCount);
-        rotateLastBorrowerContract(borrowerIndex, borrowerCount);
-        rotateLastMainContract(mainIndex);
+        delete lendingContractsMappingByLender[msg.sender][index];
+        delete lendingContractsMappingByBorrower[borrowerAddress][borrowerIndex];
+        delete lendingContractMapping[contractLookup];
+        delete lendingContractCountMapping[mainIndex];
+
+        rotateLastLenderContract(msg.sender, lenderIndex, lenderCount, borrowerIndex, mainIndex);
+        rotateLastBorrowerContract(borrowerAddress, borrowerIndex, borrowerCount, lenderIndex, mainIndex);
+        rotateLastMainContract(mainIndex, lenderIndex, borrowerIndex);
         
         lenderCountMapping[msg.sender]--;
         borrowerCountMapping[borrowerAddress]--;
-        
-        delete lendingContractsMappingByLender[msg.sender][index];
-        delete lendingContractsMappingByBorrower[borrowerAddress][borrowerIndex];
-        delete lendingContractMapping[contractAddress];
-        delete lendingContractCountMapping[mainIndex];
+        lendingContractCount--;
+
+        NodeLender(contractLookup).deleteContract();
     }
     
-    function rotateLastLenderContract(address lender, uint index, uint count) internal {
-        lendingContractsMappingByLender[lender][index];
+    function rotateLastLenderContract(address lender, uint lenderIndex, uint lenderCount, uint borrowerIndex, uint mainIndex) internal {
+        lendingContractsMappingByLender[lender][lenderIndex] = lendingContractsMappingByLender[lender][lenderCount];
+        lendingContractsMappingByLender[lender][lenderIndex].lenderIndex = lenderIndex;
+        lendingContractsMappingByLender[lender][lenderIndex].borrowerIndex = borrowerIndex;
+        lendingContractsMappingByLender[lender][lenderIndex].index = mainIndex;
     }
     
-    function rotateLastBorrowerContract(uint index) internal {
-        
+    function rotateLastBorrowerContract(address borrower, uint borrowerIndex, uint borrowerCount, uint lenderIndex, uint mainIndex) internal {
+        lendingContractsMappingByBorrower[borrower][borrowerIndex] = lendingContractsMappingByBorrower[borrower][borrowerCount];
+        lendingContractsMappingByBorrower[borrower][borrowerIndex].borrowerIndex = borrowerIndex;
+        lendingContractsMappingByBorrower[borrower][borrowerIndex].lenderIndex = lenderIndex;
+        lendingContractsMappingByBorrower[borrower][borrowerIndex].index = mainIndex;
     }
     
-    function rotateLastMainContract(uint index) internal {
-        
+    function rotateLastMainContract(uint mainIndex, uint lenderIndex, uint borrowerIndex) internal {     
+        lendingContractCountMapping[mainIndex] = lendingContractCountMapping[lendingContractCount];
+        lendingContractCountMapping[mainIndex].lenderIndex = lenderIndex;
+        lendingContractCountMapping[mainIndex].borrowerIndex = borrowerIndex;
+        lendingContractCountMapping[mainIndex].index = mainIndex;
+        address newContractAddress = lendingContractCountMapping[lendingContractCount].lendingContractAddress;
+        lendingContractMapping[newContractAddress].lenderIndex = lenderIndex; 
+        lendingContractMapping[newContractAddress].borrowerIndex = borrowerIndex; 
+        lendingContractMapping[newContractAddress].index = mainIndex;     
     }
-    
-    function 
+
     function getTotalContractCount() public view returns (uint) {
         return lendingContractCount;
     }
@@ -161,10 +189,6 @@ contract LenderManagement {
     
     function contractUpdateLender(address contractAddress, address newLender) public {
         NodeLender(contractAddress).updateLender(newLender);
-    }
-
-    function coontractUpdateBorrower(address contractAddress, address newBorrower) public {
-        NodeLender(contractAddress).updateBorrower(newBorrower);
     }
     
     modifier onlyOwner {
@@ -254,9 +278,14 @@ contract NodeLender {
         selfdestruct(lender);
     }
     
-    function setBorrower(address newBorrower) public payable () {
+    function setBorrower(address newBorrower) payable public returns (bool) {
         assert(available && msg.value == (originationFee * (1 ether)));
         borrower = newBorrower;
+        return true;
+    }
+
+    function getOriginationFee() public view returns (uint) {
+        return originationFee;
     }
 
     modifier onlyLender {
