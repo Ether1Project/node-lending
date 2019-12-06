@@ -17,6 +17,8 @@ contract LenderManagement {
     uint public mnCollateralRequirement;
     uint public snCollateralRequirement;
     
+    uint minOriginationFee;
+    
     struct lendingContract {
         string nodeType;
         uint index;
@@ -27,19 +29,21 @@ contract LenderManagement {
         address lendingContractAddress;
         uint originationFee;
         bool available;
+        uint lenderSplit;
     }
     
     constructor() public {
         owner = msg.sender;
         lendingContractCount = 0;
-        gnCollateralRequirement = 30000;
-        mnCollateralRequirement = 15000;
-        snCollateralRequirement = 5000;
+        gnCollateralRequirement = 3; // For Testing
+        mnCollateralRequirement = 2; // For Testing
+        snCollateralRequirement = 1; // For Testing
+        minOriginationFee = 1; // For Testing
     }
     
     // This function is used to deploy a new lending contract - fee is desired origination fee
     function createLendingContract (uint split, string nodeType, uint fee) public payable {
-        assert(keccak256(nodeType) == keccak256("GN") || keccak256(nodeType) == keccak256("MN") || keccak256(nodeType) == keccak256("SN") && fee >= 100);
+        assert(keccak256(nodeType) == keccak256("GN") || keccak256(nodeType) == keccak256("MN") || keccak256(nodeType) == keccak256("SN") && fee >= minOriginationFee);
 
         if(keccak256(nodeType) == keccak256("GN")){ assert(msg.value == (gnCollateralRequirement * (1 ether))); }
         else if(keccak256(nodeType) == keccak256("MN")){ assert(msg.value == (mnCollateralRequirement * (1 ether))); }
@@ -47,7 +51,7 @@ contract LenderManagement {
         
         address newLendingContract = new NodeLender(split, nodeType, fee);
         
-        lendingContract memory newContract = lendingContract({nodeType:nodeType, index:lendingContractCount, lenderIndex:lenderCountMapping[msg.sender], borrowerIndex:0, lenderAddress:msg.sender, borrowerAddress:msg.sender, lendingContractAddress:newLendingContract, originationFee:fee, available:true});
+        lendingContract memory newContract = lendingContract({nodeType:nodeType, index:lendingContractCount, lenderIndex:lenderCountMapping[msg.sender], borrowerIndex:0, lenderAddress:msg.sender, borrowerAddress:msg.sender, lendingContractAddress:newLendingContract, originationFee:fee, available:true, lenderSplit:split});
         lendingContractsMappingByLender[msg.sender][lenderCountMapping[msg.sender]] = newContract;
         lenderCountMapping[msg.sender]++;
         
@@ -153,6 +157,35 @@ contract LenderManagement {
     function getBorrowerContractCount(address borrower) public view returns (uint) {
         return lenderCountMapping[borrower];
     }
+
+    function getContractAvailability(address lenderAddress, uint index) public view returns (bool) {
+        return lendingContractsMappingByLender[lenderAddress][index].available;
+    }
+
+    function getContractAddress(address lenderAddress, uint index) public view returns (address) {
+        return lendingContractsMappingByLender[lenderAddress][index].lendingContractAddress;
+    }
+
+    function getContractNodeType(address lenderAddress, uint index) public view returns (string) {
+        return lendingContractsMappingByLender[lenderAddress][index].nodeType;
+    }
+
+    function getContractBorrowerAddress(address lenderAddress, uint index) public view returns (address) {
+        return lendingContractsMappingByLender[lenderAddress][index].borrowerAddress;
+    }
+
+    function getContractLenderAddress(address lenderAddress, uint index) public view returns (address) {
+        return lendingContractsMappingByLender[lenderAddress][index].lenderAddress;
+    }
+
+    function getContractCollateralAmount(address lenderAddress, uint index) public view returns (uint) {
+        address contractLookup = lendingContractsMappingByLender[lenderAddress][index].lendingContractAddress;
+        return NodeLender(contractLookup).getCollateralAmount();
+    }
+
+    function getContractLenderSplit(address lenderAddress, uint index) public view returns (uint) {
+        return lendingContractsMappingByLender[lenderAddress][index].lenderSplit;
+    }
     
     function updateGnCollateralRequirement(uint requirement) public onlyOwner() {
         gnCollateralRequirement = requirement;
@@ -164,6 +197,10 @@ contract LenderManagement {
     
     function updateSnCollateralRequirement(uint requirement) public onlyOwner() {
         snCollateralRequirement = requirement;
+    }
+    
+    function updateMinOriginationFee(uint fee) public onlyOwner() {
+        minOriginationFee = fee;
     }
     
     // Start remote contract interactions
@@ -216,11 +253,11 @@ contract NodeLender {
     
     // On Deployment - A Split of 10 Means 10% Lender Split
     constructor(uint split, string contractType, uint fee) public payable {
-        assert(fee > 100);
+        assert(fee > 1); // For Testing
         lender = msg.sender;
         borrower = address(0);
         lenderSplit = split;
-        paymentThreshold = 100;
+        paymentThreshold = 1; //For Testing
         borrowerTxAllowance = 2;
         nodeType = contractType;
         nodeCollateralAmount = msg.value;
@@ -286,6 +323,10 @@ contract NodeLender {
 
     function getOriginationFee() public view returns (uint) {
         return originationFee;
+    }
+
+    function getCollateralAmount() public view returns (uint) {
+        return nodeCollateralAmount;
     }
 
     modifier onlyLender {
