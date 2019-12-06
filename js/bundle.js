@@ -16,6 +16,10 @@ async function callContract(){
   console.log("Lender Contract Count: " + lenderContractCount);
   console.log("Borrower Contract Count: " + borrowerContractCount);
 
+  callLenderData(await contract, await lenderContractCount);
+}
+
+async function callLenderData(contract, lenderContractCount) {
   for (var i = 0; i < lenderContractCount; i++) {
     const contractAddress = await contract.methods.getContractAddress(loginAddress, i).call({})
     const contractNodeType = await contract.methods.getContractNodeType(loginAddress, i).call({})
@@ -25,7 +29,7 @@ async function callContract(){
     const contractAvailability = "Yes"
 
     console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Borrower Address: " + contractBorrowerAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
-    $('#data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address">' + contractBorrowerAddress + '</div></div>');
+    $('#lender-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address">' + contractBorrowerAddress + '</div></div>');
   }
 }
 
