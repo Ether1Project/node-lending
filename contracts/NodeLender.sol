@@ -6,8 +6,8 @@ contract LenderManagement {
     
     mapping (address => mapping(uint => lendingContract)) public lendingContractsMappingByLender;
     mapping (address => mapping(uint => lendingContract)) public lendingContractsMappingByBorrower;
-    mapping(address => uint) lenderCountMapping;
-    mapping(address => uint) borrowerCountMapping;
+    mapping(address => uint) public lenderCountMapping;
+    mapping(address => uint) public borrowerCountMapping;
     
     mapping(address => lendingContract) public lendingContractMapping;
     mapping(uint => lendingContract) public lendingContractCountMapping;
@@ -25,6 +25,7 @@ contract LenderManagement {
         address lenderAddress;
         address borrowerAddress;
         address lendingContractAddress;
+        uint originationFee;
         bool available;
     }
     
@@ -36,8 +37,8 @@ contract LenderManagement {
         snCollateralRequirement = 5000;
     }
     
-    // This function is used to deploy a new lending contract
-    function createLendingContract (uint split, string nodeType) public payable {
+    // This function is used to deploy a new lending contract - fee is desired origination fee
+    function createLendingContract (uint split, string nodeType, uint fee) public payable {
         assert(keccak256(nodeType) == keccak256("GN") || keccak256(nodeType) == keccak256("MN") || keccak256(nodeType) == keccak256("SN"));
 
         if(keccak256(nodeType) == keccak256("GN")){ assert(msg.value == (gnCollateralRequirement * (1 ether))); }
@@ -46,7 +47,7 @@ contract LenderManagement {
         
         address newLendingContract = new NodeLender(split, nodeType);
         
-        lendingContract memory newContract = lendingContract({nodeType:nodeType, index:lendingContractCount, lenderIndex:lenderCountMapping[msg.sender], borrowerIndex:0, lenderAddress:msg.sender, borrowerAddress:msg.sender, lendingContractAddress:newLendingContract, available:true});
+        lendingContract memory newContract = lendingContract({nodeType:nodeType, index:lendingContractCount, lenderIndex:lenderCountMapping[msg.sender], borrowerIndex:0, lenderAddress:msg.sender, borrowerAddress:msg.sender, lendingContractAddress:newLendingContract, originationFee:fee, available:true});
         lendingContractsMappingByLender[msg.sender][lenderCountMapping[msg.sender]] = newContract;
         lenderCountMapping[msg.sender]++;
         
@@ -75,6 +76,54 @@ contract LenderManagement {
         lendingContractMapping[contractAddress].borrowerIndex == borrowerCountMapping[msg.sender];
         
         lendingContractsMappingByBorrower[msg.sender][borrowerCountMapping[msg.sender]] = lendingContractMapping[contractAddress];
+    }
+    
+    function removeContract(uint index) public {
+        address borrowerAddress = lendingContractsMappingByLender[msg.sender][index].borrowerAddress;
+        uint borrowerIndex = lendingContractsMappingByLender[msg.sender][index].borrowerIndex;
+        uint lenderIndex = lendingContractsMappingByLender[msg.sender][index].lenderIndex;
+        address contractAddress = lendingContractsMappingByLender[msg.sender][index].contractAddress;
+        uint mainIndex = lendingContractsMappingByLender[msg.sender][index].index;
+        
+        uint lenderCount = lenderCountMapping[msg.sender];
+        uint borrowerCount = borrowerCountMapping[borrowerAddress];
+        
+        rotateLastLenderContract(msg.sender, lenderIndex, lenderCount);
+        rotateLastBorrowerContract(borrowerIndex, borrowerCount);
+        rotateLastMainContract(mainIndex);
+        
+        lenderCountMapping[msg.sender]--;
+        borrowerCountMapping[borrowerAddress]--;
+        
+        delete lendingContractsMappingByLender[msg.sender][index];
+        delete lendingContractsMappingByBorrower[borrowerAddress][borrowerIndex];
+        delete lendingContractMapping[contractAddress];
+        delete lendingContractCountMapping[mainIndex];
+    }
+    
+    function rotateLastLenderContract(address lender, uint index, uint count) internal {
+        lendingContractsMappingByLender[lender][index];
+    }
+    
+    function rotateLastBorrowerContract(uint index) internal {
+        
+    }
+    
+    function rotateLastMainContract(uint index) internal {
+        
+    }
+    
+    function 
+    function getTotalContractCount() public view returns (uint) {
+        return lendingContractCount;
+    }
+    
+    function getLenderContractCount(address lender) public view returns (uint) {
+        return lenderCountMapping[lender];
+    }
+    
+    function getBorrowerContractCount(address borrower) public view returns (uint) {
+        return lenderCountMapping[borrower];
     }
     
     function updateGnCollateralRequirement(uint requirement) public onlyOwner() {
@@ -134,18 +183,25 @@ contract NodeLender {
     uint public paymentThreshold;
     uint public lenderSplit;
     uint public borrowerTxAllowance;
+    bool public available;
+    
+    uint public originationFee;
     
     string public nodeType;
     uint nodeCollateralAmount;
     
     // On Deployment - A Split of 10 Means 10% Lender Split
-    constructor(uint split, string contractType) public payable {
+    constructor(uint split, string contractType, uint fee) public payable {
+        assert(fee > 100);
         lender = msg.sender;
+        borrower = address(0);
         lenderSplit = split;
         paymentThreshold = 100;
         borrowerTxAllowance = 2;
         nodeType = contractType;
         nodeCollateralAmount = msg.value;
+        available = true;
+        originationFee = fee;
     }
 
     function() payable external {
@@ -189,7 +245,17 @@ contract NodeLender {
         lender = newLender;
     }
 
-    function updateBorrower(address newBorrower) public onlyLender() {
+    function resetContract() public lenderOrBorrower() {
+        available = true;
+        borrower = address(0);
+    }
+    
+    function deleteContract() public onlyLender() {
+        selfdestruct(lender);
+    }
+    
+    function setBorrower(address newBorrower) public payable () {
+        assert(available && msg.value == (originationFee * (1 ether)));
         borrower = newBorrower;
     }
 
