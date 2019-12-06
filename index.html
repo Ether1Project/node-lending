@@ -26,6 +26,31 @@
 	<div class="limiter">
 		<div class="container-table100">
 			<div class="wrap-table100">
+					<div class="table" id="available-data-table">
+
+						<div class="row header">
+							<div class="cell">
+								Open/Available Contracts
+							</div>
+						</div>
+
+						<div class="row header">
+							<div class="cell">
+								Node Type
+							</div>
+							<div class="cell">
+								Lender Split
+							</div>
+							<div class="cell">
+								Node Contract Availability
+							</div>
+							<div class="cell">
+								Lender Address
+							</div>
+						</div>
+
+					</div>
+					<br>
 					<div class="table" id="lender-data-table">
 
 						<div class="row header">
@@ -42,7 +67,7 @@
 								Lender Split
 							</div>
 							<div class="cell">
-								Node Availability
+								Node Contract Availability
 							</div>
 							<div class="cell">
 								Borrower Address
@@ -67,10 +92,7 @@
 								Lender Split
 							</div>
 							<div class="cell">
-								Node Availability
-							</div>
-							<div class="cell">
-								Borrower Address
+								Lender Address
 							</div>
 						</div>
 
@@ -100,19 +122,10 @@
       <div class="modal-body">
 
         <table class="table table-hover">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Product name</th>
-              <th>Price</th>
-              <th>Remove</th>
-            </tr>
-          </thead>
           <tbody>
               <div class="md-form mb-5">
-              <i class="fas fa-envelope prefix grey-text"></i>
-              <label data-error="wrong" data-success="right" for="purchase-private-key">Private Key:</label>
-              <input type="text" id="purchase-private-key" class="form-control validate" required>
+              <label data-error="wrong" data-success="right" for="purchase-private-key">Enter Private Key To Login:</label>
+              <input type="text" id="private-key" class="form-control validate" style="background-color: #e0dce0;"required>
             </div>
           </tbody>
         </table>
@@ -120,8 +133,8 @@
       </div>
       <!--Footer-->
       <div class="modal-footer">
-        <button type="button" class="btn btn-outline-primary" data-dismiss="modal">Close</button>
-        <button class="btn btn-primary" id="loginModalButton">Login</button>
+        <button type="button" class="btn btn-primary" data-dismiss="modal" style="border-color: #840032; background-color: #840032;">Close</button>
+        <button type="button" class="btn btn-primary" id="loginModalButton" style="border-color: #840032; background-color: #840032;">Login</button>
       </div>
     </div>
   </div>

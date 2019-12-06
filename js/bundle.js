@@ -7,29 +7,73 @@ const CONTRACT_ABI = JSON.parse('[{"constant":true,"inputs":[],"name":"mnCollate
 
 var loginAddress = "0x1f756cF3E5bee774B3fC7E271f324a6A9B343570";
 
+$('#modalLogin').modal();
+
 async function callContract(){
 
   const contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
-  const lenderContractCount = await contract.methods.getLendingContractCount(loginAddress).call()
+  const totalContractCount = await contract.methods.getLendingContractCount(loginAddress).call()
+  const lenderContractCount = await contract.methods.getLenderContractCount(loginAddress).call()
   const borrowerContractCount = await contract.methods.getBorrowerContractCount(loginAddress).call()
 
+  console.log("Total Contract Count: " + totalContractCount);
   console.log("Lender Contract Count: " + lenderContractCount);
   console.log("Borrower Contract Count: " + borrowerContractCount);
 
+  callAvailableData(await contract, await totalContractCount);
   callLenderData(await contract, await lenderContractCount);
+  callBorrowerData(await contract, await lenderContractCount);
+}
+
+async function callAvailableData(contract, totalContractCount) {
+  for (var i = 0; i < totalContractCount; i++) {
+    const availability = await contract.methods.getContractAvailabiity(i).call({})
+
+    if(contractAvailability == true) {
+      const contractAddress = await contract.methods.getContractAddress(loginAddress, i).call({})
+      const contractNodeType = await contract.methods.getContractNodeType(loginAddress, i).call({})
+      const contractLenderAddress = await contract.methods.getContractBorrowerAddress(loginAddress, i).call({})
+      const contractLenderSplit = await contract.methods.getContractLenderSplit(loginAddress, i).call({})
+      const contractCollateralAmount = await contract.methods.getContractCollateralAmount(loginAddress, i).call({})
+      const contractAvailability = "Yes"
+      console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Borrower Address: " + contractBorrowerAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
+      $('#available-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address">' + contractLenderAddress + '</div></div>');
+    }
+  }
 }
 
 async function callLenderData(contract, lenderContractCount) {
   for (var i = 0; i < lenderContractCount; i++) {
+    const availability = await contract.methods.getContractAvailabiity(i).call({})
+
+    var contractAvailability;
+
+    if(contractAvailability == true) {
+      contractAvailability = "Yes"
+    } else {
+      contractAvailability = "No"
+    }
     const contractAddress = await contract.methods.getContractAddress(loginAddress, i).call({})
     const contractNodeType = await contract.methods.getContractNodeType(loginAddress, i).call({})
     const contractBorrowerAddress = await contract.methods.getContractBorrowerAddress(loginAddress, i).call({})
     const contractLenderSplit = await contract.methods.getContractLenderSplit(loginAddress, i).call({})
     const contractCollateralAmount = await contract.methods.getContractCollateralAmount(loginAddress, i).call({})
-    const contractAvailability = "Yes"
 
     console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Borrower Address: " + contractBorrowerAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
     $('#lender-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address">' + contractBorrowerAddress + '</div></div>');
+  }
+}
+
+async function callBorrowerData(contract, borrowerContractCount) {
+  for (var i = 0; i < borrowerContractCount; i++) {
+    const contractAddress = await contract.methods.getContractAddress(loginAddress, i).call({})
+    const contractNodeType = await contract.methods.getContractNodeType(loginAddress, i).call({})
+    const contractLenderAddress = await contract.methods.getContractLenderAddress(loginAddress, i).call({})
+    const contractLenderSplit = await contract.methods.getContractLenderSplit(loginAddress, i).call({})
+    const contractCollateralAmount = await contract.methods.getContractCollateralAmount(loginAddress, i).call({})
+
+    console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Borrower Address: " + contractBorrowerAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
+    $('#borrower-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '</div><div class="cell" data-title="Lender Address">' + contractLenderAddress + '</div></div>');
   }
 }
 
