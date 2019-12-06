@@ -133,6 +133,31 @@ async function newLendingContract(split, nodeType) {
     });
 }
 
+function waitForReceipt(hash, cb) {
+  web3.eth.getTransactionReceipt(hash, function(err, receipt) {
+    console.log("Waiting For TX Confirmation...");
+    $(".status").html("Waiting For TX Confirmation...");
+    web3.eth.getBlock('latest', function(e, res) {
+      if (!e) {}
+    });
+    if (err) {
+      error(err);
+    }
+    if (receipt !== null) {
+      console.log("TX Has Been Mined");
+      $(".status").html("TX Has Been Mined");
+      console.log(receipt);
+      if (cb) {
+        cb(receipt);
+      }
+    } else {
+      window.setTimeout(function() {
+        waitForReceipt(hash, cb);
+      }, 5000);
+    }
+  });
+}
+
 function getCollateralAmount(nodeType) {
   if(nodeType == "GN") {
     return 30000000000000000000000;
