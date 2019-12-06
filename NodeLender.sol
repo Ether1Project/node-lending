@@ -1,6 +1,9 @@
 pragma solidity 0.4.23;
 
+
 contract LenderManagement {
+    address public owner;
+    
     mapping (address => mapping(uint => lendingContract)) public lendingContractsMappingByLender;
     mapping (address => mapping(uint => lendingContract)) public lendingContractsMappingByBorrower;
     mapping(address => uint) lenderCountMapping;
@@ -9,7 +12,10 @@ contract LenderManagement {
     mapping(address => lendingContract) public lendingContractMapping;
     mapping(uint => lendingContract) public lendingContractCountMapping;
     
-    uint lendingContractCount;
+    uint public lendingContractCount;
+    uint public gnCollateralRequirement;
+    uint public mnCollateralRequirement;
+    uint public snCollateralRequirement;
     
     struct lendingContract {
         string nodeType;
@@ -23,14 +29,22 @@ contract LenderManagement {
     }
     
     constructor() public {
+        owner = msg.sender;
         lendingContractCount = 0;
+        gnCollateralRequirement = 30000;
+        mnCollateralRequirement = 15000;
+        snCollateralRequirement = 5000;
     }
     
     // This function is used to deploy a new lending contract
-    function createLendingContract (uint split, string nodeType) public {
+    function createLendingContract (uint split, string nodeType) public payable {
         assert(keccak256(nodeType) == keccak256("GN") || keccak256(nodeType) == keccak256("MN") || keccak256(nodeType) == keccak256("SN"));
+
+        if(keccak256(nodeType) == keccak256("GN")){ assert(msg.value == (gnCollateralRequirement * (1 ether))); }
+        else if(keccak256(nodeType) == keccak256("MN")){ assert(msg.value == (mnCollateralRequirement * (1 ether))); }
+        else if(keccak256(nodeType) == keccak256("SN")){ assert(msg.value == (snCollateralRequirement * (1 ether))); }
         
-        address newLendingContract = new NodeLender(split);
+        address newLendingContract = new NodeLender(split, nodeType);
         
         lendingContract memory newContract = lendingContract({nodeType:nodeType, index:lendingContractCount, lenderIndex:lenderCountMapping[msg.sender], borrowerIndex:0, lenderAddress:msg.sender, borrowerAddress:msg.sender, lendingContractAddress:newLendingContract, available:true});
         lendingContractsMappingByLender[msg.sender][lenderCountMapping[msg.sender]] = newContract;
@@ -62,6 +76,25 @@ contract LenderManagement {
         
         lendingContractsMappingByBorrower[msg.sender][borrowerCountMapping[msg.sender]] = lendingContractMapping[contractAddress];
     }
+    
+    function updateGnCollateralRequirement(uint requirement) public onlyOwner() {
+        gnCollateralRequirement = requirement;
+    }
+    
+    function updateMnCollateralRequirement(uint requirement) public onlyOwner() {
+        mnCollateralRequirement = requirement;
+    }
+    
+    function updateSnCollateralRequirement(uint requirement) public onlyOwner() {
+        snCollateralRequirement = requirement;
+    }
+    
+    modifier onlyOwner {
+        require(
+            msg.sender == owner
+        );
+        _;
+    }
 }
 
 contract NodeLender {
@@ -72,13 +105,18 @@ contract NodeLender {
     uint public paymentThreshold;
     uint public lenderSplit;
     uint public borrowerTxAllowance;
-
+    
+    string public nodeType;
+    uint nodeCollateralAmount;
+    
     // On Deployment - A Split of 10 Means 10% Lender Split
-    constructor(uint split) public {
+    constructor(uint split, string contractType) public payable {
         lender = msg.sender;
         lenderSplit = split;
         paymentThreshold = 100;
         borrowerTxAllowance = 2;
+        nodeType = contractType;
+        nodeCollateralAmount = msg.value;
     }
 
     function() payable external {
