@@ -89,6 +89,35 @@ contract LenderManagement {
         snCollateralRequirement = requirement;
     }
     
+    // Start remote contract interactions
+    function contractTransfer(address contractAddress, address to, uint value) public returns (bool) {
+        return NodeLender(contractAddress).transfer(to, value);
+    }
+    
+    function contractBorrowerTransfer(address contractAddress, address to, uint value) public returns (bool) {
+        return NodeLender(contractAddress).borrowerTransfer(to, value);
+    }
+
+    function contractUpdateBorrowerTxAllowance(address contractAddress, uint allowance) public {
+        NodeLender(contractAddress).updateBorrowerTxAllowance(allowance);
+    }
+    
+    function contractUpdateThreshold(address contractAddress, uint threshold) public {
+        NodeLender(contractAddress).updateThreshold(threshold);
+    }
+    
+    function contractWithdraw(address contractAddress) public {
+        NodeLender(contractAddress).withdraw();
+    }
+    
+    function contractUpdateLender(address contractAddress, address newLender) public {
+        NodeLender(contractAddress).updateLender(newLender);
+    }
+
+    function coontractUpdateBorrower(address contractAddress, address newBorrower) public {
+        NodeLender(contractAddress).updateBorrower(newBorrower);
+    }
+    
     modifier onlyOwner {
         require(
             msg.sender == owner
