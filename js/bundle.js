@@ -11,20 +11,37 @@ var loginPrivateKey;
 //var loginAddress = "0x1f756cF3E5bee774B3fC7E271f324a6A9B343570";
 
 $('#modalLogin').modal();
+$(document).on('click', '#loginModalButton', function() {
+  if(document.getElementById("private-key") !== null) {
+    var privateKey = document.getElementById("private-key").value;
+    getLoginData(privateKey);
+    $('#modalLogin').modal('hide');
+  } else {
+    console.log("No Private Key Detected - Please Login Correctly");
+  }
+});
 
 async function callContract(){
 
   contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
-  const totalContractCount = await contract.methods.getLendingContractCount(loginAddress).call()
+  //const totalContractCount = await contract.methods.getTotalContractCount().call()
 
-  console.log("Total Contract Count: " + totalContractCount);
+  //console.log("Total Contract Count: " + totalContractCount);
 
-  callAvailableData(await contract, await totalContractCount);
+  //callAvailableData(await contract, await totalContractCount);
 }
 
 function getLoginData(privateKey) {
-  loginPrivateKey = privateKey;
-  loginAddress = address;
+  loginPrivateKey = '0x' + privateKey;
+  let account = web3.eth.accounts.privateKeyToAccount(loginPrivateKey);
+  web3.eth.accounts.wallet.add(account);
+  web3.eth.defaultAccount = account.address;
+  loginAddress = account.address;
+  //For Testing
+  loginAddress = "0x1f756cF3E5bee774B3fC7E271f324a6A9B343570";
+
+  console.log("Login Private Key: " + loginPrivateKey + " Login Address: " + loginAddress);
+
   callLenderData();
   callBorrowerData();
 }
@@ -34,11 +51,11 @@ async function callAvailableData(contract, totalContractCount) {
     const availability = await contract.methods.getContractAvailabiity(i).call({})
 
     if(contractAvailability == true) {
-      const contractAddress = await contract.methods.getContractAddress(loginAddress, i).call({})
-      const contractNodeType = await contract.methods.getContractNodeType(loginAddress, i).call({})
-      const contractLenderAddress = await contract.methods.getContractBorrowerAddress(loginAddress, i).call({})
-      const contractLenderSplit = await contract.methods.getContractLenderSplit(loginAddress, i).call({})
-      const contractCollateralAmount = await contract.methods.getContractCollateralAmount(loginAddress, i).call({})
+      const contractAddress = await contract.methods.getContractAddress(i).call({})
+      const contractNodeType = await contract.methods.getContractNodeType(i).call({})
+      const contractLenderAddress = await contract.methods.getContractBorrowerAddress(i).call({})
+      const contractLenderSplit = await contract.methods.getContractLenderSplit(i).call({})
+      const contractCollateralAmount = await contract.methods.getContractCollateralAmount(i).call({})
       const contractAvailability = "Yes"
       console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Borrower Address: " + contractBorrowerAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
       $('#available-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address">' + contractLenderAddress + '</div></div>');
@@ -47,19 +64,19 @@ async function callAvailableData(contract, totalContractCount) {
 }
 
 async function callLenderData() {
-  const lenderContractCount = await contract.methods.getLenderContractCount(loginAddress).call()
+  const lenderContractCount = await contract.methods.getLendingContractCount(loginAddress).call()
   console.log("Lender Contract Count: " + lenderContractCount);
 
   for (var i = 0; i < lenderContractCount; i++) {
-    const availability = await contract.methods.getContractAvailabiity(i).call({})
+    //const availability = await contract.methods.getContractAvailabiity(i).call({})
 
     var contractAvailability;
 
-    if(contractAvailability == true) {
+    //if(contractAvailability == true) {
       contractAvailability = "Yes"
-    } else {
-      contractAvailability = "No"
-    }
+    //} else {
+    //  contractAvailability = "No"
+    //}
     const contractAddress = await contract.methods.getContractAddress(loginAddress, i).call({})
     const contractNodeType = await contract.methods.getContractNodeType(loginAddress, i).call({})
     const contractBorrowerAddress = await contract.methods.getContractBorrowerAddress(loginAddress, i).call({})
