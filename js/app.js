@@ -4,24 +4,28 @@ const web3 = new Web3('https://rpc.ether1.org');
 const CONTRACT_ADDRESS = '0x2567CCC175468371048020fAC1BCcA9A993daa94';
 const CONTRACT_ABI = JSON.parse('[{"constant":true,"inputs":[],"name":"mnCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"requirement","type":"uint256"}],"name":"updateSnCollateralRequirement","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"userAddress","type":"address"},{"name":"index","type":"uint256"}],"name":"getContractAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"to","type":"address"},{"name":"value","type":"uint256"}],"name":"contractBorrowerTransfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"lendingContractMapping","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"available","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lendingContractsMappingByLender","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"available","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"newBorrower","type":"address"}],"name":"coontractUpdateBorrower","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"borrowerContractSelection","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"userAddress","type":"address"}],"name":"getBorrowerContractCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"userAddress","type":"address"},{"name":"index","type":"uint256"}],"name":"getContractCollateralAmount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"newLender","type":"address"}],"name":"contractUpdateLender","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"contractWithdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"allowance","type":"uint256"}],"name":"contractUpdateBorrowerTxAllowance","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"userAddress","type":"address"},{"name":"index","type":"uint256"}],"name":"getContractLenderSplit","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"requirement","type":"uint256"}],"name":"updateMnCollateralRequirement","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"userAddress","type":"address"}],"name":"getLendingContractCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"userAddress","type":"address"},{"name":"index","type":"uint256"}],"name":"getContractBorrowerAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"split","type":"uint256"},{"name":"nodeType","type":"string"}],"name":"createLendingContract","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"snCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lendingContractCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"requirement","type":"uint256"}],"name":"updateGnCollateralRequirement","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"gnCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lendingContractCountMapping","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"available","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"threshold","type":"uint256"}],"name":"contractUpdateThreshold","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[{"name":"userAddress","type":"address"},{"name":"index","type":"uint256"}],"name":"getContractNodeType","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lendingContractsMappingByBorrower","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"available","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"to","type":"address"},{"name":"value","type":"uint256"}],"name":"contractTransfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"}]');
 
-var loginAddress = "0x1f756cF3E5bee774B3fC7E271f324a6A9B343570";
+var contract;
+var loginAddress;
+var loginPrivateKey;
+//var loginAddress = "0x1f756cF3E5bee774B3fC7E271f324a6A9B343570";
 
 $('#modalLogin').modal();
 
 async function callContract(){
 
-  const contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+  contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
   const totalContractCount = await contract.methods.getLendingContractCount(loginAddress).call()
-  const lenderContractCount = await contract.methods.getLenderContractCount(loginAddress).call()
-  const borrowerContractCount = await contract.methods.getBorrowerContractCount(loginAddress).call()
 
   console.log("Total Contract Count: " + totalContractCount);
-  console.log("Lender Contract Count: " + lenderContractCount);
-  console.log("Borrower Contract Count: " + borrowerContractCount);
 
   callAvailableData(await contract, await totalContractCount);
-  callLenderData(await contract, await lenderContractCount);
-  callBorrowerData(await contract, await lenderContractCount);
+}
+
+function getLoginData(privateKey) {
+  loginPrivateKey = privateKey;
+  loginAddress = address;
+  callLenderData();
+  callBorrowerData();
 }
 
 async function callAvailableData(contract, totalContractCount) {
@@ -41,7 +45,10 @@ async function callAvailableData(contract, totalContractCount) {
   }
 }
 
-async function callLenderData(contract, lenderContractCount) {
+async function callLenderData() {
+  const lenderContractCount = await contract.methods.getLenderContractCount(loginAddress).call()
+  console.log("Lender Contract Count: " + lenderContractCount);
+
   for (var i = 0; i < lenderContractCount; i++) {
     const availability = await contract.methods.getContractAvailabiity(i).call({})
 
@@ -63,7 +70,10 @@ async function callLenderData(contract, lenderContractCount) {
   }
 }
 
-async function callBorrowerData(contract, borrowerContractCount) {
+async function callBorrowerData() {
+  const borrowerContractCount = await contract.methods.getBorrowerContractCount(loginAddress).call()
+  console.log("Borrower Contract Count: " + borrowerContractCount);
+
   for (var i = 0; i < borrowerContractCount; i++) {
     const contractAddress = await contract.methods.getContractAddress(loginAddress, i).call({})
     const contractNodeType = await contract.methods.getContractNodeType(loginAddress, i).call({})
