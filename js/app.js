@@ -103,4 +103,44 @@ async function callBorrowerData() {
   }
 }
 
+async function newLendingContract(split, nodeType) {
+  const nodeCollateralAmount = getCollateralAmount(nodeType);
+  const tx = {
+    to: CONTRACT_ADDRESS,
+    from: web3.eth.defaultAccount,
+    value: nodeCollateralAmount,
+    gas: 6000000,
+    data: contract.methods.createLendingContract(split, nodeType).encodeABI()
+  };
+
+  web3.eth.accounts.signTransaction(tx, loginPrivateKey)
+    .then(function(signedTransactionData) {
+      web3.eth.sendSignedTransaction(singedTransactionData.rawTransaction, function(error, result) {
+        if(!error) {
+          if(result) {
+            waitForReceipt(result, function(receipt) {
+              console.log("Tx Has Been Mined: " + receipt);
+              $(".status").html("TX Has Been Mined");
+            });
+          } else {
+            console.log("There Was A Problem With TX");
+            $(".status").html("There Was A Problem With TX");
+          }
+        } else {
+          console.error(error);
+        }
+      });
+    });
+}
+
+function getCollateralAmount(nodeType) {
+  if(nodeType == "GN") {
+    return 30000000000000000000000;
+  } else if(nodeType == "MN") {
+    return 15000000000000000000000;
+  } else if(nodeType == "SN") {
+    return 5000000000000000000000;
+  }
+}
+
 callContract();
