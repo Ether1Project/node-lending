@@ -1,0 +1,23 @@
+{
+  "name": "node-lending",
+  "version": "1.0.0",
+  "description": "Ether-1 Node Lending",
+  "main": "app.js",
+  "dependencies": {
+    "web3": "^1.2.4"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ether1Project/node-lending.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ether1Project/node-lending/issues"
+  },
+  "homepage": "https://github.com/Ether1Project/node-lending#readme"
+}
