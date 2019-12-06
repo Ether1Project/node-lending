@@ -89,6 +89,34 @@ contract LenderManagement {
         snCollateralRequirement = requirement;
     }
     
+    function getLendingContractCount() public view returns (uint) {
+        return lenderCountMapping[msg.sender];
+    }
+    
+    function getBorrowerContractCount() public view returns (uint) {
+        return borrowerCountMapping[msg.sender];
+    }
+    
+    function getContractAddress(uint index) public view returns (address) {
+        return lendingContractsMappingByLender[msg.sender][index].lendingContractAddress;
+    }
+    
+    function getContractNodeType(uint index) public view returns (string) {
+        return lendingContractsMappingByLender[msg.sender][index].nodeType;
+    }
+    
+    function getContractBorrowerAddress(uint index) public view returns (address) {
+        return lendingContractsMappingByLender[msg.sender][index].borrowerAddress;
+    }
+    
+    function getContractLenderSplit(uint index) public view returns (uint) {
+        return NodeLender(lendingContractsMappingByLender[msg.sender][index].lendingContractAddress).getLenderSplit();
+    }
+    
+    function getContractCollateralAmount(uint index) public view returns (uint) {
+        return NodeLender(lendingContractsMappingByLender[msg.sender][index].lendingContractAddress).getCollateralAmount();
+    }
+    
     // Start remote contract interactions
     function contractTransfer(address contractAddress, address to, uint value) public returns (bool) {
         return NodeLender(contractAddress).transfer(to, value);
@@ -179,6 +207,14 @@ contract NodeLender {
     
     function updateThreshold(uint threshold) public onlyLender() {
         paymentThreshold = threshold;
+    }
+    
+    function getLenderSplit() public view returns (uint) {
+        return lenderSplit;
+    }
+    
+    function getCollateralAmount() public view returns (uint) {
+        return nodeCollateralAmount;
     }
 
     function withdraw() public onlyLender() {
