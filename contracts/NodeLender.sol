@@ -165,26 +165,51 @@ contract LenderManagement {
     function getContractAddress(address lenderAddress, uint index) public view returns (address) {
         return lendingContractsMappingByLender[lenderAddress][index].lendingContractAddress;
     }
+    
+    function getContractAddress(uint index) public view returns (address) {
+        return lendingContractCountMapping[index].lendingContractAddress;
+    }
 
     function getContractNodeType(address lenderAddress, uint index) public view returns (string) {
         return lendingContractsMappingByLender[lenderAddress][index].nodeType;
+    }
+    
+    function getContractNodeType(uint index) public view returns (string) {
+        return lendingContractCountMapping[index].nodeType;
     }
 
     function getContractBorrowerAddress(address lenderAddress, uint index) public view returns (address) {
         return lendingContractsMappingByLender[lenderAddress][index].borrowerAddress;
     }
+    
+    function getContractBorrowerAddress(uint index) public view returns (address) {
+        return lendingContractCountMapping[index].borrowerAddress;
+    }
 
     function getContractLenderAddress(address lenderAddress, uint index) public view returns (address) {
         return lendingContractsMappingByLender[lenderAddress][index].lenderAddress;
+    }
+    
+    function getContractLenderAddress(uint index) public view returns (address) {
+        return lendingContractCountMapping[index].lenderAddress;
     }
 
     function getContractCollateralAmount(address lenderAddress, uint index) public view returns (uint) {
         address contractLookup = lendingContractsMappingByLender[lenderAddress][index].lendingContractAddress;
         return NodeLender(contractLookup).getCollateralAmount();
     }
+    
+    function getContractCollateralAmount(uint index) public view returns (uint) {
+        address contractLookup = lendingContractCountMapping[index].lendingContractAddress;
+        return NodeLender(contractLookup).getCollateralAmount();
+    }
 
     function getContractLenderSplit(address lenderAddress, uint index) public view returns (uint) {
         return lendingContractsMappingByLender[lenderAddress][index].lenderSplit;
+    }
+    
+    function getContractLenderSplit(uint index) public view returns (uint) {
+        return lendingContractCountMapping[index].lenderSplit;
     }
     
     function updateGnCollateralRequirement(uint requirement) public onlyOwner() {
