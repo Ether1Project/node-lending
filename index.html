@@ -144,6 +144,52 @@
 </div>
 <!-- Modal: modalLogin -->
 
+	
+<!-- Modal: minedBlockTrackerModal -->
+<div class="modal fade" id="minedBlockTrackerModal" tabindex="-1" role="dialog" aria-labelledby="minedBlockTrackerModal"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header">
+        <h4 class="modal-title" id="minedBlockTrackerModalTitle">Ether-1 Transaction Tracker</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body">
+
+            <main>
+
+              <div class="box node">
+                <h3 style="padding: 20px;">Ether-1 Transaction Status: <span id="mining-status-message" style="color: #3CB371; font-size: 24px; text-align: center !important;">In Progress</span></h3>
+
+                <div>
+                  <h3 style="padding-left:20px;">Message Log:</h3>
+                  <center>
+                    <span class="mining-message" id="mining-message" style="color: #3CB371; font-size: 24px;"></span>
+                  </center>
+                </div>
+                <div class="summary" style="text-align: center !important; padding: 20px; width:100%; background: #000000;">
+                  <h3 style="font-size: 24px;">Current Ether-1 Block Height: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span id="block-height" style="color: #3CB371; font-size: 24px;">0</span></h3>
+                </div>
+
+              </div>
+
+
+            </main>
+      </div>
+      <!--Footer-->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" style="border-color: #840032; background-color: #840032;">Close</button>
+        <button type="button" class="btn btn-primary" id="loginModalButton" style="border-color: #840032; background-color: #840032;">Login</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal: minedBlockTrackerModal -->
+
 <!-- Modal: modalNewContractSetup -->
 <div class="modal fade" id="modalNewContractSetup" tabindex="-1" role="dialog" aria-labelledby="modalNewContractSetup"
   aria-hidden="true">
@@ -169,7 +215,7 @@
                 <option value="SN">Service Node</option>
               </select>
               <label data-error="wrong" data-success="right" for="node-type">Select Desired Origination Fee</label>
-              <select class="selectpicker form-control" data-style="btn-primary" id="node-type-selection">
+              <select class="selectpicker form-control" data-style="btn-primary" id="fee-selection">
                 <option value="150">150 ETHO</option>
                 <option value="200">200 ETHO</option>
                 <option value="500">500 ETHO</option>
@@ -177,7 +223,7 @@
                 <option value="2000">2000 ETHO</option>
               </select>
               <label data-error="wrong" data-success="right" for="node-type">Select Desired Lender Split % (Amount Lender Receives)</label>
-              <select class="selectpicker form-control" data-style="btn-primary" id="node-type-selection">
+              <select class="selectpicker form-control" data-style="btn-primary" id="split-value-selection">
                 <option value="1">1%</option>
                 <option value="2">2%</option>
                 <option value="3">3%</option>

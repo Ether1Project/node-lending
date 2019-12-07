@@ -46,8 +46,8 @@ function getLoginData(privateKey) {
 async function callAvailableData(contract, totalContractCount) {
   if(totalContractCount > 0) {
     for (var i = 0; i < totalContractCount; i++) {
-      //const availability = await contract.methods.getContractAvailability(loginAddress, i).call({})
-      const availability = true;
+      const availability = await contract.methods.getContractAvailability(i).call({})
+      //const availability = true;
       if(availability == true) {
         const contractAddress = await contract.methods.getContractAddress(i).call({})
         const contractNodeType = await contract.methods.getContractNodeType(i).call({})
@@ -70,7 +70,7 @@ async function callLenderData() {
 
   if(lenderContractCount > 0) {
     for (var i = 0; i < lenderContractCount; i++) {
-      const availability = await contract.methods.getContractAvailability(i).call({})
+      const availability = await contract.methods.getContractAvailability(loginAddress, i).call({})
 
       var contractAvailability;
 
@@ -115,30 +115,35 @@ async function callBorrowerData() {
 
 window.newLendingContractSetup = function(){
   $('#modalNewContractSetup').modal();
+  $(document).on('click', '#submitNewContractButton', function() {
+    $('#modalNewContractSetup').modal('hide');
+    newLendingContract();
+  });
 };
 
 async function newLendingContract() {
   var split = document.getElementById("split-value-selection").value;
   var nodeType = document.getElementById("node-type-selection").value;
   var fee = document.getElementById("fee-selection").value;
-  $('#modalNewContractSetup').modal('hide');
   const nodeCollateralAmount = getCollateralAmount(nodeType);
   const tx = {
     to: CONTRACT_ADDRESS,
     from: web3.eth.defaultAccount,
-    value: nodeCollateralAmount,
+    value: Number(nodeCollateralAmount),
     gas: 6000000,
-    data: contract.methods.createLendingContract(split, nodeType).encodeABI()
+    data: contract.methods.createLendingContract(split, nodeType, fee).encodeABI()
   };
 
   web3.eth.accounts.signTransaction(tx, loginPrivateKey)
     .then(function(signedTransactionData) {
-      web3.eth.sendSignedTransaction(singedTransactionData.rawTransaction, function(error, result) {
+      web3.eth.sendSignedTransaction(signedTransactionData.rawTransaction, function(error, result) {
         if(!error) {
           if(result) {
+            $('#minedBlockTrackerModal').modal();
             waitForReceipt(result, function(receipt) {
               console.log("Tx Has Been Mined: " + receipt);
               $(".status").html("TX Has Been Mined");
+              $('#minedBlockTrackerModal').modal('hide');
             });
           } else {
             console.log("There Was A Problem With TX");
@@ -178,11 +183,14 @@ function waitForReceipt(hash, cb) {
 
 function getCollateralAmount(nodeType) {
   if(nodeType == "GN") {
-    return 30000000000000000000000;
+    //return 30000000000000000000000;
+    return 3000000000000000000;
   } else if(nodeType == "MN") {
-    return 15000000000000000000000;
+    //return 15000000000000000000000;
+    return 2000000000000000000;
   } else if(nodeType == "SN") {
-    return 5000000000000000000000;
+    //return 5000000000000000000000;
+    return 1000000000000000000;
   }
 }
 
