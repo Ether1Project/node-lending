@@ -26,20 +26,24 @@
 	<div class="limiter">
 		<div class="container-table100">
 			<div class="wrap-table100">
+							<div class="cell" style="float: right; padding-right: 10px; padding-left: 10px;">
+							       <button type="button" class="btn btn-primary" onclick="window.initiateLogin();">Login</button>
+							</div>
+
 					<div class="table" id="available-data-table">
 
-						<div class="row header">
+						<div class="row header" id="available-header1">
 							<div class="cell">
 								Open/Available Contracts
 							</div>
 						</div>
 
-						<div class="row header">
+						<div class="row header" id="available-header2">
 							<div class="cell">
 								Node Type
 							</div>
-							<div class="cell">
-								Lender Split
+							<div class="cell" style="width: 50px;">
+								Lender %
 							</div>
 							<div class="cell">
 								Node Contract Availability
@@ -55,22 +59,22 @@
 					<br>
 					<div class="table" id="lender-data-table">
 
-						<div class="row header">
+						<div class="row header" id="lender-header1">
 							<div class="cell">
 								Lender Contracts
 							</div>
-							<div class="cell" style="padding-right: 40px;">
-							       <button type="button" class="btn btn-primary" onclick="window.newLendingContractSetup();">Add Lending Contract</button>
+							<div class="cell" style="padding-right: 10px; padding-left: 10px;">
+							       <button type="button" class="btn btn-primary" id="add-contract-button" style="display: none;" onclick="window.newLendingContractSetup();">Add Contract</button>
 							</div>
 						</div>
 
 
-						<div class="row header">
+						<div class="row header" id="lender-header2">
 							<div class="cell">
 								Node Type
 							</div>
-							<div class="cell">
-								Lender Split
+							<div class="cell" style="width: 50px;">
+								Lender %
 							</div>
 							<div class="cell">
 								Node Contract Availability
@@ -78,28 +82,38 @@
 							<div class="cell" style="padding-right: 15px;">
 								Borrower Address
 							</div>
+							<div class="cell" style="padding-right: 50px;">
+							</div>
+							<div class="cell" style="padding-right: 50px;">
+							</div>
+							<div class="cell" style="padding-right: 50px;">
+							</div>
+
 						</div>
 
 					</div>
 					<br>
 					<div class="table" id="borrower-data-table">
 
-						<div class="row header">
+						<div class="row header" id="borrower-header1">
 							<div class="cell">
 								Borrower Contracts
 							</div>
 						</div>
 
-						<div class="row header">
+						<div class="row header" id="borrower-header2">
 							<div class="cell">
 								Node Type
 							</div>
-							<div class="cell">
-								Lender Split
+							<div class="cell" style="width: 50px;">
+								Lender %
 							</div>
 							<div class="cell" style="padding-right: 15px;">
 								Lender Address
 							</div>
+							<div class="cell" style="padding-right: 15px;">
+							</div>
+
 						</div>
 
 					</div>
@@ -160,30 +174,18 @@
       <!--Body-->
       <div class="modal-body">
 
-            <main>
-
-              <div class="box node">
-                <h3 style="padding: 20px;">Ether-1 Transaction Status: <span id="mining-status-message" style="color: #3CB371; font-size: 24px; text-align: center !important;">In Progress</span></h3>
-
-                <div>
-                  <h3 style="padding-left:20px;">Message Log:</h3>
-                  <center>
-                    <span class="mining-message" id="mining-message" style="color: #3CB371; font-size: 24px;"></span>
-                  </center>
-                </div>
-                <div class="summary" style="text-align: center !important; padding: 20px; width:100%; background: #000000;">
-                  <h3 style="font-size: 24px;">Current Ether-1 Block Height: &nbsp&nbsp&nbsp&nbsp&nbsp&nbsp<span id="block-height" style="color: #3CB371; font-size: 24px;">0</span></h3>
-                </div>
-
-              </div>
-
-
-            </main>
+        <table class="table table-hover">
+          <tbody>
+            <div class="md-form mb-5">
+              <h4 class="modal-title">Ether-1 Transaction Status: <span id="status">In Progress</span></h4>
+              <h4 class="modal-title">Waiting For Transaction Confirmation</h4>
+            </div>
+          </tbody>
+        </table>	
       </div>
       <!--Footer-->
       <div class="modal-footer">
         <button type="button" class="btn btn-primary" data-dismiss="modal" style="border-color: #840032; background-color: #840032;">Close</button>
-        <button type="button" class="btn btn-primary" id="loginModalButton" style="border-color: #840032; background-color: #840032;">Login</button>
       </div>
     </div>
   </div>
