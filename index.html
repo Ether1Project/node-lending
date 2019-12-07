@@ -47,6 +47,8 @@
 							<div class="cell">
 								Lender Address
 							</div>
+							<div class="cell" style="padding-right: 15px;">
+							</div>
 						</div>
 
 					</div>
@@ -57,7 +59,11 @@
 							<div class="cell">
 								Lender Contracts
 							</div>
+							<div class="cell" style="padding-right: 40px;">
+							       <button type="button" class="btn btn-primary" onclick="window.newLendingContractSetup();">Add Lending Contract</button>
+							</div>
 						</div>
+
 
 						<div class="row header">
 							<div class="cell">
@@ -69,7 +75,7 @@
 							<div class="cell">
 								Node Contract Availability
 							</div>
-							<div class="cell">
+							<div class="cell" style="padding-right: 15px;">
 								Borrower Address
 							</div>
 						</div>
@@ -91,7 +97,7 @@
 							<div class="cell">
 								Lender Split
 							</div>
-							<div class="cell">
+							<div class="cell" style="padding-right: 15px;">
 								Lender Address
 							</div>
 						</div>
@@ -137,6 +143,87 @@
   </div>
 </div>
 <!-- Modal: modalLogin -->
+
+<!-- Modal: modalNewContractSetup -->
+<div class="modal fade" id="modalNewContractSetup" tabindex="-1" role="dialog" aria-labelledby="modalNewContractSetup"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header">
+        <h4 class="modal-title" id="newContractSetupModalTitle">New Lending Contract Setup</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body">
+
+        <table class="table table-hover">
+          <tbody>
+              <div class="md-form mb-5">
+              <label data-error="wrong" data-success="right" for="node-type">Select NodeType</label>
+              <select class="selectpicker form-control" data-style="btn-primary" id="node-type-selection">
+                <option value="GN">Gateway Node</option>
+                <option value="MN">Masternode</option>
+                <option value="SN">Service Node</option>
+              </select>
+              <label data-error="wrong" data-success="right" for="node-type">Select Desired Origination Fee</label>
+              <select class="selectpicker form-control" data-style="btn-primary" id="node-type-selection">
+                <option value="150">150 ETHO</option>
+                <option value="200">200 ETHO</option>
+                <option value="500">500 ETHO</option>
+                <option value="1000">1000 ETHO</option>
+                <option value="2000">2000 ETHO</option>
+              </select>
+              <label data-error="wrong" data-success="right" for="node-type">Select Desired Lender Split % (Amount Lender Receives)</label>
+              <select class="selectpicker form-control" data-style="btn-primary" id="node-type-selection">
+                <option value="1">1%</option>
+                <option value="2">2%</option>
+                <option value="3">3%</option>
+                <option value="4">4%</option>
+                <option value="5">5%</option>
+                <option value="6">6%</option>
+                <option value="7">7%</option>
+                <option value="8">8%</option>
+                <option value="9">9%</option>
+                <option value="10">10%</option>
+                <option value="11">11%</option>
+                <option value="12">12%</option>
+                <option value="13">13%</option>
+                <option value="14">14%</option>
+                <option value="15">15%</option>
+                <option value="16">16%</option>
+                <option value="17">17%</option>
+                <option value="18">18%</option>
+                <option value="19">19%</option>
+                <option value="20">20%</option>
+                <option value="21">21%</option>
+                <option value="22">22%</option>
+                <option value="23">23%</option>
+                <option value="24">24%</option>
+                <option value="25">25%</option>
+                <option value="26">26%</option>
+                <option value="27">27%</option>
+                <option value="28">28%</option>
+                <option value="29">29%</option>
+                <option value="30">30%</option>
+              </select>
+
+            </div>
+          </tbody>
+        </table>
+
+      </div>
+      <!--Footer-->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" style="border-color: #840032; background-color: #840032;">Close</button>
+        <button type="button" class="btn btn-primary" id="submitNewContractButton" style="border-color: #840032; background-color: #840032;">Submit</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal: modalNewContractSetup -->
 	
 <!--===============================================================================================-->	
 	<script src="vendor/jquery/jquery-3.2.1.min.js"></script>
