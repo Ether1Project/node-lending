@@ -1,14 +1,10 @@
 pragma solidity 0.4.23;
-
-
 contract LenderManagement {
     address public owner;
-    
     mapping (address => mapping(uint => lendingContract)) public lendingContractsMappingByLender;
     mapping (address => mapping(uint => lendingContract)) public lendingContractsMappingByBorrower;
     mapping(address => uint) public lenderCountMapping;
     mapping(address => uint) public borrowerCountMapping;
-    
     mapping(address => lendingContract) public lendingContractMapping;
     mapping(uint => lendingContract) public lendingContractCountMapping;
     
@@ -34,7 +30,7 @@ contract LenderManagement {
     
     constructor() public {
         owner = msg.sender;
-        lendingContractCount = 0;
+        //lendingContractCount = 0;
         gnCollateralRequirement = 3; // For Testing
         mnCollateralRequirement = 2; // For Testing
         snCollateralRequirement = 1; // For Testing
@@ -51,7 +47,7 @@ contract LenderManagement {
         
         address newLendingContract = new NodeLender(split, nodeType, fee);
         
-        lendingContract memory newContract = lendingContract({nodeType:nodeType, index:lendingContractCount, lenderIndex:lenderCountMapping[msg.sender], borrowerIndex:0, lenderAddress:msg.sender, borrowerAddress:msg.sender, lendingContractAddress:newLendingContract, originationFee:fee, available:true, lenderSplit:split});
+        lendingContract memory newContract = lendingContract({nodeType:nodeType, index:lendingContractCount, lenderIndex:lenderCountMapping[msg.sender], borrowerIndex:0, lenderAddress:msg.sender, borrowerAddress:address(0), lendingContractAddress:newLendingContract, originationFee:fee, available:true, lenderSplit:split});
         lendingContractsMappingByLender[msg.sender][lenderCountMapping[msg.sender]] = newContract;
         lenderCountMapping[msg.sender]++;
         
@@ -161,6 +157,10 @@ contract LenderManagement {
     function getContractAvailability(address lenderAddress, uint index) public view returns (bool) {
         return lendingContractsMappingByLender[lenderAddress][index].available;
     }
+    
+    function getContractAvailability(uint index) public view returns (bool) {
+        return lendingContractCountMapping[index].available;
+    }
 
     function getContractAddress(address lenderAddress, uint index) public view returns (address) {
         return lendingContractsMappingByLender[lenderAddress][index].lendingContractAddress;
@@ -212,7 +212,7 @@ contract LenderManagement {
         return lendingContractCountMapping[index].lenderSplit;
     }
     
-    function updateGnCollateralRequirement(uint requirement) public onlyOwner() {
+    /*function updateGnCollateralRequirement(uint requirement) public onlyOwner() {
         gnCollateralRequirement = requirement;
     }
     
@@ -222,24 +222,24 @@ contract LenderManagement {
     
     function updateSnCollateralRequirement(uint requirement) public onlyOwner() {
         snCollateralRequirement = requirement;
-    }
+    }*/
     
-    function updateMinOriginationFee(uint fee) public onlyOwner() {
-        minOriginationFee = fee;
-    }
+    //function updateMinOriginationFee(uint fee) public onlyOwner() {
+     //   minOriginationFee = fee;
+    //}
     
     // Start remote contract interactions
-    function contractTransfer(address contractAddress, address to, uint value) public returns (bool) {
+    /* contractTransfer(address contractAddress, address to, uint value) public returns (bool) {
         return NodeLender(contractAddress).transfer(to, value);
-    }
+    }*/
     
     function contractBorrowerTransfer(address contractAddress, address to, uint value) public returns (bool) {
         return NodeLender(contractAddress).borrowerTransfer(to, value);
     }
 
-    function contractUpdateBorrowerTxAllowance(address contractAddress, uint allowance) public {
+    /*function contractUpdateBorrowerTxAllowance(address contractAddress, uint allowance) public {
         NodeLender(contractAddress).updateBorrowerTxAllowance(allowance);
-    }
+    }*/
     
     function contractUpdateThreshold(address contractAddress, uint threshold) public {
         NodeLender(contractAddress).updateThreshold(threshold);
@@ -280,7 +280,7 @@ contract NodeLender {
     constructor(uint split, string contractType, uint fee) public payable {
         assert(fee > 1); // For Testing
         lender = msg.sender;
-        borrower = address(0);
+        //borrower = address(0);
         lenderSplit = split;
         paymentThreshold = 1; //For Testing
         borrowerTxAllowance = 2;
