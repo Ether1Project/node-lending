@@ -79,7 +79,7 @@ contract LenderManagement {
     }
     
     function calculateContractCost(address contractAddress) public view returns (uint) {
-         uint fees = NodeLender(contractAddress).getOriginationFee();
+         uint fees = NodeLender(contractAddress).originationFee();
          string memory nodeType =  lendingContractMapping[contractAddress].nodeType;
          if(keccak256(nodeType) == keccak256("GN")) {
              fees += gnCollateralRequirement;
@@ -196,20 +196,48 @@ contract LenderManagement {
     
     function getContractCollateralAmount(address lenderAddress, uint index) public view returns (uint) {
         address contractLookup = lendingContractsMappingByLender[lenderAddress][index].lendingContractAddress;
-        return NodeLender(contractLookup).getCollateralAmount();
+        return NodeLender(contractLookup).nodeCollateralAmount();
     }
     
     function getContractCollateralAmount(uint index) public view returns (uint) {
         address contractLookup = lendingContractCountMapping[index].lendingContractAddress;
-        return NodeLender(contractLookup).getCollateralAmount();
+        return NodeLender(contractLookup).nodeCollateralAmount();
+    }
+
+    function getContractLastPaid(address lenderAddress, uint index) public view returns (uint) {
+        address contractLookup = lendingContractsMappingByLender[lenderAddress][index].lendingContractAddress;
+        return NodeLender(contractLookup).lastPaid();
+    }
+
+    function getContractLastPaid(uint index) public view returns (uint) {
+        address contractLookup = lendingContractCountMapping[index].lendingContractAddress;
+        return NodeLender(contractLookup).lastPaid();
     }   
+       
+    function getContractLastReward(address lenderAddress, uint index) public view returns (uint) {
+        address contractLookup = lendingContractsMappingByLender[lenderAddress][index].lendingContractAddress;
+        return NodeLender(contractLookup).lastRewardAmount();
+    }
+
+    function getContractLastReward(uint index) public view returns (uint) {
+        address contractLookup = lendingContractCountMapping[index].lendingContractAddress;
+        return NodeLender(contractLookup).lastRewardAmount();
+    }  
        
     function contractBorrowerTransfer(address contractAddress, address to, uint value) public returns (bool) {
         return NodeLender(contractAddress).borrowerTransfer(to, value);
     }
-    
-    function contractWithdraw(address contractAddress) public {
-        NodeLender(contractAddress).withdraw();
+
+    function rewardDispersals(uint index) public {
+        uint indexTracker = index;
+        for (uint i = 0; i < 100; i++) {
+             indexTracker++;
+             if(indexTracker >= lendingContractCount) {
+                  indexTracker = 0;
+             }
+             address contractLookup = lendingContractCountMapping[indexTracker].lendingContractAddress;
+             NodeLender(contractLookup).disperseRewards();
+        }
     }
 }
 
@@ -220,10 +248,13 @@ contract NodeLender {
 
     uint public paymentThreshold;
     uint public lenderSplit;
-    uint public borrowerTxAllowance;
+    mapping(address => uint) public borrowerTxAllowance;
     bool public available;
     uint public originationFee;
-    
+    uint public lastPaid;
+    uint public lastRewardAmount;
+    uint public borrowerDeploymentBlock;
+
     string public nodeType;
     uint public nodeCollateralAmount;
 
@@ -236,7 +267,6 @@ contract NodeLender {
         lender = tx.origin;
         lenderSplit = split;
         paymentThreshold = 100;
-        borrowerTxAllowance = 2;
         nodeType = contractType;
         nodeCollateralAmount = msg.value;
         available = true;
@@ -249,48 +279,70 @@ contract NodeLender {
             uint borrowerPayment = (msg.value - lenderPayment);
             lender.transfer(lenderPayment);
             borrower.transfer(borrowerPayment);
+            lastPaid = block.number;
+            lastRewardAmount = msg.value;
+        }
+    }
+
+    function disperseRewards() public {
+        int dispersalAmount = int(address(this).balance) - (int(nodeCollateralAmount) + int(originationFee * (1 ether)));
+        if(dispersalAmount > 0) {
+            uint lenderPayment = uint(dispersalAmount / 100) * lenderSplit;
+            uint borrowerPayment = (uint(dispersalAmount) - lenderPayment);
+            lender.transfer(lenderPayment);
+            borrower.transfer(borrowerPayment);
+            lastPaid = block.number;
+            lastRewardAmount = uint(dispersalAmount);
         }
     }
     
     // borrowerTransfer allows borrower to send a tx to verify node (must be less than 1 etho) - value is in wei
     function borrowerTransfer(address to, uint value) public lenderOrBorrower returns (bool) {
-        assert(address(this).balance >= value && value < (1 ether) && borrowerTxAllowance > 0);
-        borrowerTxAllowance--;
+        assert(address(this).balance >= value && value < (1 ether) && borrowerTxAllowance[borrower] < 5);
+        borrowerTxAllowance[borrower]++;
         to.transfer(value);
         emit logSender(address(this));
         emit logReceiver(to);
         return true;
     }
-  
-    function withdraw() public onlyLender() {
-        lender.transfer(address(this).balance);
-    }
 
+    // Will refund 90% origination fee if lender cancels within 50000 blocks of borrower agreement
     function resetContract() public lenderOrBorrower() {
+        assert(!available && borrower != address(0));
+        if(tx.origin == lender) {
+            if((block.number - borrowerDeploymentBlock) < 50000) {
+                borrower.transfer(((originationFee / 100) * 90) * (1 ether));
+            } else {
+                borrowerTxAllowance[borrower] = 0;
+            }        
+        }
+        borrowerDeploymentBlock = 0;        
         available = true;
         borrower = address(0);
-        if(tx.origin == lender) {
-            borrowerTxAllowance = 2;
-        }
+        lastPaid = 0;  
     }
     
     function deleteContract() public onlyLender() {
+        if((block.number - borrowerDeploymentBlock) < 50000 && !available && borrower != address(0)) {
+            borrower.transfer(originationFee * (1 ether));
+        }
         selfdestruct(lender);
     }
     
     function setBorrower(address newBorrower) payable public returns (bool) {
         assert(available && msg.value == (originationFee * (1 ether)));
         borrower = newBorrower;
+        borrowerDeploymentBlock = block.number;
         return true;
     }
 
-    function getOriginationFee() public view returns (uint) {
+    /*function getOriginationFee() public view returns (uint) {
         return originationFee;
     }
 
     function getCollateralAmount() public view returns (uint) {
         return nodeCollateralAmount;
-    }
+    }*/
 
     modifier onlyLender {
         require(

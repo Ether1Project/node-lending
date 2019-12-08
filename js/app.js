@@ -117,9 +117,16 @@ async function callLenderData() {
       const contractLenderSplit = lenderContractData.lenderSplit;
       const contractCollateralAmount = await contract.methods.getContractCollateralAmount(loginAddress, i).call({})
       const contractLenderFee = lenderContractData.originationFee;
-
+      //const lastPaid = await contract.methods.getContractLastPaid(contractAddress).call({});
+      const lastPaid = 0;
+      var contractLastPaid;
+      if(lastPaid > 0) {
+        contractLastPaid = lastPaid;
+      } else {
+        contractLastPaid = "Inactive";
+      }
       console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Borrower Address: " + contractBorrowerAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
-      $('#lender-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;">' + contractBorrowerAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-warning" onclick="window.resetContractSetup(\'' + contractAddress + '\');">Reset</button></div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-danger" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button></div></div>');
+      $('#lender-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;">' + contractBorrowerAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-warning" onclick="window.resetContractSetup(\'' + contractAddress + '\');">Reset</button></div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-danger" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button></div></div>');
     }
   } else {
     $('#lender-data-table').children().not('#lender-header1, #lender-header2').remove();
@@ -138,10 +145,17 @@ async function callBorrowerData() {
       const contractNodeType = getNodeTypeString(borrowerContractData.nodeType);
       const contractLenderAddress = borrowerContractData.lenderAddress;
       const contractLenderSplit = borrowerContractData.lenderSplit;
-      const contractCollateralAmount = await contract.methods.getContractCollateralAmount(contractLenderAddress, i).call({})
-
+      const contractCollateralAmount = await contract.methods.getContractCollateralAmount(contractLenderAddress, i).call({});
+      //const lastPaid = await contract.methods.getContractLastPaid(contractAddress).call({});
+      const lastPaid = 0;
+      var contractLastPaid;
+      if(lastPaid > 0) {
+        contractLastPaid = lastPaid;
+      } else {
+        contractLastPaid = "Inactive";
+      }
       console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
-      $('#borrower-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Address" style="padding-right: 15px;">' + contractAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-warning" onclick="window.abandonContractSetup(\'' + contractAddress + '\');">Abandon</button></div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" onclick="window.verifyNodeSetup(\'' + contractAddress + '\');">Verify Node</button></div></div>');
+      $('#borrower-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '%</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Address" style="padding-right: 15px;">' + contractAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-warning" onclick="window.abandonContractSetup(\'' + contractAddress + '\');">Abandon</button></div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" onclick="window.verifyNodeSetup(\'' + contractAddress + '\');">Verify Node</button></div></div>');
     }
   } else {
     $('#borrower-data-table').children().not('#borrower-header1, #borrower-header2').remove();
