@@ -26,11 +26,18 @@
 	<div class="limiter">
 		<div class="container-table100">
 			<div class="wrap-table100">
+						<div class="row header">
+							<div class="cell" style="width: 500px; height: 100px; background-color: #362f31;">
+                                                        <img src="https://ethofs.com/index/images/logo.png"></img>
+								<h3 style="padding: 15px;">Staking Market</h3>
+                                                                <h4 style="font-size: 18px;"><span id="login-account"></span></h4>
+
+							</div>
+						</div><br>
+
 							<div class="cell" style="float: right; padding-right: 10px; padding-left: 10px;">
 							       <button type="button" class="btn btn-primary" onclick="window.initiateLogin();">Login</button>
 							</div>
-
-					<div class="table" id="available-data-table">
 
 						<div class="row header" id="available-header1">
 							<div class="cell">
@@ -38,15 +45,21 @@
 							</div>
 						</div>
 
+
+					<div class="table" id="available-data-table">
+
 						<div class="row header" id="available-header2">
-							<div class="cell">
-								Node Type
+							<div class="cell" style="width: 20%;">
+								Type
 							</div>
-							<div class="cell" style="width: 50px;">
+							<div class="cell" style="width: 10%;">
+								Fee
+							</div>
+							<div class="cell" style="width: 10%;">
 								Lender %
 							</div>
-							<div class="cell">
-								Node Contract Availability
+							<div class="cell" style="width: 15%;">
+								Availability
 							</div>
 							<div class="cell">
 								Lender Address
@@ -57,7 +70,6 @@
 
 					</div>
 					<br>
-					<div class="table" id="lender-data-table">
 
 						<div class="row header" id="lender-header1">
 							<div class="cell">
@@ -69,49 +81,61 @@
 						</div>
 
 
+					<div class="table" id="lender-data-table">
+
+
 						<div class="row header" id="lender-header2">
-							<div class="cell">
-								Node Type
+							<div class="cell" style="width: 20%;">
+								Type
 							</div>
-							<div class="cell" style="width: 50px;">
+							<div class="cell" style="width: 10%;">
+								Fee
+							</div>
+							<div class="cell" style="width: 10%;">
 								Lender %
 							</div>
-							<div class="cell">
-								Node Contract Availability
+							<div class="cell" style="width: 15%;">
+								Availability
 							</div>
 							<div class="cell" style="padding-right: 15px;">
 								Borrower Address
 							</div>
 							<div class="cell" style="padding-right: 50px;">
+                                                        &nbsp
 							</div>
+
 							<div class="cell" style="padding-right: 50px;">
-							</div>
-							<div class="cell" style="padding-right: 50px;">
+                                                        &nbsp
 							</div>
 
 						</div>
 
 					</div>
 					<br>
-					<div class="table" id="borrower-data-table">
-
 						<div class="row header" id="borrower-header1">
 							<div class="cell">
 								Borrower Contracts
 							</div>
 						</div>
 
+
+
+					<div class="table" id="borrower-data-table">
+
 						<div class="row header" id="borrower-header2">
-							<div class="cell">
-								Node Type
+ 							<div class="cell" style="width: 20%;">
+								Type
 							</div>
-							<div class="cell" style="width: 50px;">
+							<div class="cell" style="width: 20%;">
 								Lender %
 							</div>
-							<div class="cell" style="padding-right: 15px;">
-								Lender Address
+							<div class="cell">
+								Contract Address
 							</div>
-							<div class="cell" style="padding-right: 15px;">
+							</div>
+							<div class="cell" style="padding-right: 50px;">
+							</div>
+							<div class="cell" style="padding-right: 50px;">
 							</div>
 
 						</div>
@@ -158,6 +182,41 @@
 </div>
 <!-- Modal: modalLogin -->
 
+<!-- Modal: verifyNodeModal -->
+<div class="modal fade" id="verifyNodeModal" tabindex="-1" role="dialog" aria-labelledby="verifyNodeModal"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header">
+        <h4 class="modal-title" id="verifyNodeModalTitle">Node Verification TX</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body">
+
+        <table class="table table-hover">
+          <tbody>
+              <div class="md-form mb-5">
+              <label data-error="wrong" data-success="right" for="verify-node-address">Enter Node Verification Address (From Node Dashboard):</label>
+              <input type="text" id="verify-node-address" class="form-control validate" style="background-color: #e0dce0;"required>
+            </div>
+          </tbody>
+        </table>
+
+      </div>
+      <!--Footer-->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" style="border-color: #840032; background-color: #840032;">Close</button>
+        <button type="button" class="btn btn-primary" id="verifyNodeConfirmButton" style="border-color: #840032; background-color: #840032;">Send TX</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal: verifyNodeModal -->
+
 	
 <!-- Modal: minedBlockTrackerModal -->
 <div class="modal fade" id="minedBlockTrackerModal" tabindex="-1" role="dialog" aria-labelledby="minedBlockTrackerModal"
@@ -177,8 +236,9 @@
         <table class="table table-hover">
           <tbody>
             <div class="md-form mb-5">
-              <h4 class="modal-title">Ether-1 Transaction Status: <span id="status">In Progress</span></h4>
-              <h4 class="modal-title">Waiting For Transaction Confirmation</h4>
+              <br>
+              <h4 class="modal-title" style="font-size: 20px;">Ether-1 Transaction Status: <span id="status" style="color: #9c2877; font-weight: bold;">In Progress</span></h4>
+              <h4 class="modal-title" style="font-size: 20px;">Waiting For Transaction Confirmation</h4>
             </div>
           </tbody>
         </table>	
@@ -191,6 +251,110 @@
   </div>
 </div>
 <!-- Modal: minedBlockTrackerModal -->
+
+<!-- Modal: costConfirmationModal -->
+<div class="modal fade" id="costConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="costConfirmationModal"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header">
+        <h4 class="modal-title" id="costConfirmationModalTitle">Ether-1 Transaction Cost Confirmation</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body">
+
+        <table class="table table-hover">
+          <tbody>
+            <div class="md-form mb-5">
+	      <br>
+              <h4 class="modal-title" style="font-size: 20px;">Transaction Cost: &nbsp<span id="confirm-cost" style="color: #9c2877; font-weight: bold;">0</span>&nbsp ETHO</h4>
+              <h4 class="modal-title" style="font-size: 20px;">Do You Wish To Continue?</h4>
+            </div>
+          </tbody>
+        </table>	
+      </div>
+      <!--Footer-->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" style="border-color: #840032; background-color: #840032;">Close</button>
+        <button type="button" class="btn btn-primary" id="confirmButton" style="border-color: #840032; background-color: #840032;">Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal: costConfirmationModal -->
+
+<!-- Modal: confirmationModal -->
+<div class="modal fade" id="confirmationModal" tabindex="-1" role="dialog" aria-labelledby="confirmationModal"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header">
+        <h4 class="modal-title" id="confirmationModalTitle">Ether-1 Transaction Confirmation</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body">
+
+        <table class="table table-hover">
+          <tbody>
+            <div class="md-form mb-5">
+	      <br>
+              <h4 class="modal-title" style="font-size: 20px;">Action Confirmation: &nbsp<span id="confirm-message" style="color: #9c2877; font-weight: bold;">Abandon</span>&nbsp Contract</h4>
+              <h4 class="modal-title" style="font-size: 20px;">Do You Wish To Continue?</h4>
+            </div>
+          </tbody>
+        </table>	
+      </div>
+      <!--Footer-->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" style="border-color: #840032; background-color: #840032;">Close</button>
+        <button type="button" class="btn btn-primary" id="generalConfirmButton" style="border-color: #840032; background-color: #840032;">Continue</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal: confirmModal -->
+
+<!-- Modal: transactionHashModal -->
+<div class="modal fade" id="transactionHashModal" tabindex="-1" role="dialog" aria-labelledby="transactionHashModal"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header">
+        <h4 class="modal-title" id="transactionHashModalTitle">Ether-1 Node Verification</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body">
+
+        <table class="table table-hover">
+          <tbody>
+            <div class="md-form mb-5">
+	      <br>
+              <h4 class="modal-title" style="font-size: 20px;">TX Hash: &nbsp<span id="verification-tx-hash" style="font-size: 12px; color: #9c2877; font-weight: bold;"></span></h4>
+              <h4 class="modal-title" style="font-size: 20px;">Copy This Hash For Node Dashboard Use</h4>
+            </div>
+          </tbody>
+        </table>	
+      </div>
+      <!--Footer-->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" style="border-color: #840032; background-color: #840032;">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal: transactionHashModal -->
 
 <!-- Modal: modalNewContractSetup -->
 <div class="modal fade" id="modalNewContractSetup" tabindex="-1" role="dialog" aria-labelledby="modalNewContractSetup"
@@ -257,7 +421,8 @@
                 <option value="29">29%</option>
                 <option value="30">30%</option>
               </select>
-
+              <hr><br>
+              <h4 class="modal-title" style="font-size: 20px;">Required Collateral For Contract Deployment:<br><span id="required-collateral" style="color: #9c2877; font-weight: bold;">30000</span>&nbsp ETHO</h4>
             </div>
           </tbody>
         </table>

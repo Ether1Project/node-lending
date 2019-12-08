@@ -30,10 +30,10 @@ contract LenderManagement {
     
     constructor() public {
         owner = msg.sender;
-        gnCollateralRequirement = 3; // For Testing
-        mnCollateralRequirement = 2; // For Testing
-        snCollateralRequirement = 1; // For Testing
-        minOriginationFee = 1; // For Testing
+        gnCollateralRequirement = 30000;
+        mnCollateralRequirement = 15000;
+        snCollateralRequirement = 5000;
+        minOriginationFee = 100;
     }
     
     // This function is used to deploy a new lending contract - fee is desired origination fee
@@ -44,7 +44,7 @@ contract LenderManagement {
         else if(keccak256(nodeType) == keccak256("MN")){ assert(msg.value == (mnCollateralRequirement * (1 ether))); }
         else if(keccak256(nodeType) == keccak256("SN")){ assert(msg.value == (snCollateralRequirement * (1 ether))); }
         
-        address newLendingContract = new NodeLender(split, nodeType, fee);
+        address newLendingContract = (new NodeLender).value(msg.value)(split, nodeType, fee);
         
         lendingContract memory newContract = lendingContract({nodeType:nodeType, index:lendingContractCount, lenderIndex:lenderCountMapping[msg.sender], borrowerIndex:0, lenderAddress:msg.sender, borrowerAddress:address(0), lendingContractAddress:newLendingContract, originationFee:fee, available:true, lenderSplit:split});
         lendingContractsMappingByLender[msg.sender][lenderCountMapping[msg.sender]] = newContract;
@@ -61,20 +61,21 @@ contract LenderManagement {
     
         address lenderAddress = lendingContractMapping[contractAddress].lenderAddress;
         uint lenderIndex = lendingContractMapping[contractAddress].lenderIndex;
-        lendingContractsMappingByLender[lenderAddress][lenderIndex].available == false; 
-        lendingContractsMappingByLender[lenderAddress][lenderIndex].borrowerAddress == msg.sender;
-        lendingContractsMappingByLender[lenderAddress][lenderIndex].borrowerIndex == borrowerCountMapping[msg.sender];
+        lendingContractsMappingByLender[lenderAddress][lenderIndex].available = false; 
+        lendingContractsMappingByLender[lenderAddress][lenderIndex].borrowerAddress = msg.sender;
+        lendingContractsMappingByLender[lenderAddress][lenderIndex].borrowerIndex = borrowerCountMapping[msg.sender];
         
         uint mainIndex = lendingContractMapping[contractAddress].index;
-        lendingContractCountMapping[mainIndex].available == false;
-        lendingContractCountMapping[mainIndex].borrowerAddress == msg.sender;
-        lendingContractCountMapping[mainIndex].borrowerIndex == borrowerCountMapping[msg.sender];
+        lendingContractCountMapping[mainIndex].available = false;
+        lendingContractCountMapping[mainIndex].borrowerAddress = msg.sender;
+        lendingContractCountMapping[mainIndex].borrowerIndex = borrowerCountMapping[msg.sender];
         
-        lendingContractMapping[contractAddress].available == false;
-        lendingContractMapping[contractAddress].borrowerAddress == msg.sender;
-        lendingContractMapping[contractAddress].borrowerIndex == borrowerCountMapping[msg.sender];
+        lendingContractMapping[contractAddress].available = false;
+        lendingContractMapping[contractAddress].borrowerAddress = msg.sender;
+        lendingContractMapping[contractAddress].borrowerIndex = borrowerCountMapping[msg.sender];
         
         lendingContractsMappingByBorrower[msg.sender][borrowerCountMapping[msg.sender]] = lendingContractMapping[contractAddress];
+        borrowerCountMapping[msg.sender]++;
     }
     
     function calculateContractCost(address contractAddress) public view returns (uint) {
@@ -154,7 +155,7 @@ contract LenderManagement {
         uint borrowerIndex = lendingContractsMappingByLender[lenderAddress][lenderIndex].borrowerIndex;
         uint borrowerCount = borrowerCountMapping[borrowerAddress];
 
-	    rotateLastBorrowerContract(borrowerAddress, borrowerIndex, borrowerCount, lenderIndex, mainIndex);
+	rotateLastBorrowerContract(borrowerAddress, borrowerIndex, borrowerCount, lenderIndex, mainIndex);
         delete lendingContractsMappingByBorrower[borrowerAddress][borrowerCount - 1];
         borrowerCountMapping[borrowerAddress]--;
         NodeLender(contractLookup).resetContract();
@@ -221,19 +222,20 @@ contract NodeLender {
     uint public lenderSplit;
     uint public borrowerTxAllowance;
     bool public available;
-    
     uint public originationFee;
     
     string public nodeType;
-    uint nodeCollateralAmount;
-    
+    uint public nodeCollateralAmount;
+
+    event logSender(address senderAddress);
+    event logReceiver(address receiverAddress);
+
     // On Deployment - A Split of 10 Means 10% Lender Split
     constructor(uint split, string contractType, uint fee) public payable {
-        assert(fee > 1); // For Testing
-        lender = msg.sender;
-        //borrower = address(0);
+        assert(fee > 100);
+        lender = tx.origin;
         lenderSplit = split;
-        paymentThreshold = 1; //For Testing
+        paymentThreshold = 100;
         borrowerTxAllowance = 2;
         nodeType = contractType;
         nodeCollateralAmount = msg.value;
@@ -255,6 +257,8 @@ contract NodeLender {
         assert(address(this).balance >= value && value < (1 ether) && borrowerTxAllowance > 0);
         borrowerTxAllowance--;
         to.transfer(value);
+        emit logSender(address(this));
+        emit logReceiver(to);
         return true;
     }
   
@@ -265,7 +269,9 @@ contract NodeLender {
     function resetContract() public lenderOrBorrower() {
         available = true;
         borrower = address(0);
-        borrowerTxAllowance = 2;
+        if(tx.origin == lender) {
+            borrowerTxAllowance = 2;
+        }
     }
     
     function deleteContract() public onlyLender() {
@@ -288,16 +294,15 @@ contract NodeLender {
 
     modifier onlyLender {
         require(
-            msg.sender == lender
+            tx.origin == lender
         );
         _;
     }
 
     modifier lenderOrBorrower() {
         require(
-            msg.sender == lender || msg.sender == borrower
+            tx.origin == lender || tx.origin == borrower
         );
         _;
     }
-
 }

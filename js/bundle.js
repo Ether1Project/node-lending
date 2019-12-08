@@ -1,13 +1,12 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 const Web3 = require('web3');
-//window.Web3 = require('web3');
 const web3 = new Web3('https://rpc.ether1.org');
-const CONTRACT_ADDRESS = '0x9e8daeD9AE38b3551BFD7d8907FeDeBad9cEbd99';
+const CONTRACT_ADDRESS = '0xa9d40b03299aA62eB7b147Ecde3473F3494CC261';
 const CONTRACT_ABI = JSON.parse('[{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"borrowerContractSelection","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"to","type":"address"},{"name":"value","type":"uint256"}],"name":"contractBorrowerTransfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"contractWithdraw","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"split","type":"uint256"},{"name":"nodeType","type":"string"},{"name":"fee","type":"uint256"}],"name":"createLendingContract","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"index","type":"uint256"}],"name":"removeContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"index","type":"uint256"},{"name":"side","type":"string"}],"name":"resetContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"borrowerCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"calculateContractCost","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"userAddress","type":"address"},{"name":"index","type":"uint256"},{"name":"side","type":"string"}],"name":"getContractAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"lenderAddress","type":"address"},{"name":"index","type":"uint256"}],"name":"getContractCollateralAmount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"index","type":"uint256"}],"name":"getContractCollateralAmount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"gnCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"lenderCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lendingContractCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lendingContractCountMapping","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"originationFee","type":"uint256"},{"name":"available","type":"bool"},{"name":"lenderSplit","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"lendingContractMapping","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"originationFee","type":"uint256"},{"name":"available","type":"bool"},{"name":"lenderSplit","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lendingContractsMappingByBorrower","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"originationFee","type":"uint256"},{"name":"available","type":"bool"},{"name":"lenderSplit","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lendingContractsMappingByLender","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"originationFee","type":"uint256"},{"name":"available","type":"bool"},{"name":"lenderSplit","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"minOriginationFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"mnCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"snCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]');
 var contract;
 var loginAddress;
 var loginPrivateKey;
-//var loginAddress = "0x1f756cF3E5bee774B3fC7E271f324a6A9B343570";
+var loggedInFlag = false;
 
 window.initiateLogin = function(){
   $('#modalLogin').modal();
@@ -35,7 +34,7 @@ async function callContract(){
 }
 
 async function refreshContractData(){
-
+  if(loggedInFlag) {updateAccountBalance(loginAddress);}
   const totalContractCount = await contract.methods.lendingContractCount().call()
   console.log("Total Contract Count: " + totalContractCount);
 
@@ -50,33 +49,51 @@ function getLoginData(privateKey) {
   web3.eth.accounts.wallet.add(account);
   web3.eth.defaultAccount = account.address;
   loginAddress = account.address;
-
+  loggedInFlag = true;
   console.log("Login Private Key: " + loginPrivateKey + " Login Address: " + loginAddress);
+  updateAccountBalance(loginAddress);
 
   $("#add-contract-button").css('display', 'block');
   callLenderData();
   callBorrowerData();
 }
 
+async function updateAccountBalance(loginAddress) {
+  web3.eth.getBalance(loginAddress).then(
+    function(response) {
+      var balance = Number(response / 1000000000000000000).toFixed(2);
+      $('#login-account').text(loginAddress + "  Balance: " + balance);
+      console.log(loginAddress + "  Balance: " + response);
+    }
+  );
+}
+
 async function callAvailableData(contract, totalContractCount) {
   if(totalContractCount > 0) {
     $('#available-data-table').children().not('#available-header1, #available-header2').remove();
+    var data = false;
     for (var i = 0; i < totalContractCount; i++) {
       const contractData = await contract.methods.lendingContractCountMapping(i).call({})
-      //const availability = true;
       if(contractData.available == true) {
+        data = true;
         const contractAddress = contractData.lendingContractAddress;
-        const contractNodeType = contractData.nodeType;
+        const contractNodeType = getNodeTypeString(contractData.nodeType);
         const contractLenderAddress = contractData.lenderAddress;
         const contractLenderSplit = contractData.lenderSplit;
         const contractCollateralAmount = await contract.methods.getContractCollateralAmount(i).call({})
-        const contractAvailability = "Yes"
+        const contractLenderFee = contractData.originationFee;
+        var contractAvailability;
+        if(contractData.available == true) {
+          contractAvailability = "Yes"
+        } else {
+          contractAvailability = "No"
+        }
         console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
-        $('#available-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success">Select</button></div></div>');
+        $('#available-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" onclick="window.selectContractSetup(\'' + contractAddress + '\');">Select</button></div></div>');
       }
     }
-  } else {
-    $('#available-data-table').children().not('#available-header1, #available-header2').remove();
+  }
+  if(!data) {
     $('#available-data-table').append('<div class="row"><div class="cell" data-title="Node Type">No Contract Data Found</div></div>');
   }
 }
@@ -96,13 +113,14 @@ async function callLenderData() {
         contractAvailability = "No"
       }
       const contractAddress = lenderContractData.lendingContractAddress;
-      const contractNodeType = lenderContractData.nodeType;
+      const contractNodeType = getNodeTypeString(lenderContractData.nodeType);
       const contractBorrowerAddress = lenderContractData.borrowerAddress;
       const contractLenderSplit = lenderContractData.lenderSplit;
       const contractCollateralAmount = await contract.methods.getContractCollateralAmount(loginAddress, i).call({})
+      const contractLenderFee = lenderContractData.originationFee;
 
       console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Borrower Address: " + contractBorrowerAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
-      $('#lender-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;">' + contractBorrowerAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-warning">Reset</button></div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-danger">Remove</button></div></div>');
+      $('#lender-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;">' + contractBorrowerAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-warning" onclick="window.resetContractSetup(\'' + contractAddress + '\');">Reset</button></div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-danger" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button></div></div>');
     }
   } else {
     $('#lender-data-table').children().not('#lender-header1, #lender-header2').remove();
@@ -113,19 +131,18 @@ async function callLenderData() {
 async function callBorrowerData() {
   const borrowerContractCount = await contract.methods.borrowerCountMapping(loginAddress).call()
   console.log("Borrower Contract Count: " + borrowerContractCount);
-
   if(borrowerContractCount > 0) {
     $('#borrower-data-table').children().not('#borrower-header1, #borrower-header2').remove();
     for (var i = 0; i < borrowerContractCount; i++) {
-      const borrowerContractData = await contract.methods.borrowerContractsMappingByLender(loginAddress, i).call({});
+      const borrowerContractData = await contract.methods.lendingContractsMappingByBorrower(loginAddress, i).call({});
       const contractAddress = borrowerContractData.lendingContractAddress;
-      const contractNodeType = borrowerContractData.nodeType;
+      const contractNodeType = getNodeTypeString(borrowerContractData.nodeType);
       const contractLenderAddress = borrowerContractData.lenderAddress;
       const contractLenderSplit = borrowerContractData.lenderSplit;
-      const contractCollateralAmount = await contract.methods.getContractCollateralAmount(loginAddress, i).call({})
+      const contractCollateralAmount = await contract.methods.getContractCollateralAmount(contractLenderAddress, i).call({})
 
       console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
-      $('#borrower-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-warning">Abandon</button></div></div>');
+      $('#borrower-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Address" style="padding-right: 15px;">' + contractAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-warning" onclick="window.abandonContractSetup(\'' + contractAddress + '\');">Abandon</button></div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" onclick="window.verifyNodeSetup(\'' + contractAddress + '\');">Verify Node</button></div></div>');
     }
   } else {
     $('#borrower-data-table').children().not('#borrower-header1, #borrower-header2').remove();
@@ -135,6 +152,20 @@ async function callBorrowerData() {
 
 window.newLendingContractSetup = function(){
   $('#modalNewContractSetup').modal();
+  var nodeType = document.getElementById("node-type-selection").value;
+  var ethoCollateralAmount;
+  if(nodeType == "GN") { ethoCollateralAmount = 30000; }
+  else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
+  else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
+  $('#required-collateral').text(ethoCollateralAmount);
+
+  $(document).on('change', '#node-type-selection', function() {
+    nodeType = document.getElementById("node-type-selection").value;
+    if(nodeType == "GN") { ethoCollateralAmount = 30000; }
+    else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
+    else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
+    $('#required-collateral').text(ethoCollateralAmount);
+  });
   $(document).on('click', '#submitNewContractButton', function() {
     $('#modalNewContractSetup').modal('hide');
     newLendingContract();
@@ -149,7 +180,7 @@ async function newLendingContract() {
   const tx = {
     to: CONTRACT_ADDRESS,
     from: web3.eth.defaultAccount,
-    value: Number(nodeCollateralAmount),
+    value: nodeCollateralAmount,
     gas: 6000000,
     data: contract.methods.createLendingContract(split, nodeType, fee).encodeABI()
   };
@@ -177,17 +208,33 @@ async function newLendingContract() {
     });
 }
 
-async function resetLendingContract() {
-  var split = document.getElementById("split-value-selection").value;
-  var nodeType = document.getElementById("node-type-selection").value;
-  var fee = document.getElementById("fee-selection").value;
-  const nodeCollateralAmount = getCollateralAmount(nodeType);
+window.selectContractSetup = function(contractAddress){
+  console.log(contractAddress);
+  selectContract(contractAddress);
+}
+
+async function selectContract(contractAddress) {
+
+  if(loggedInFlag) {
+    const contractData = await contract.methods.lendingContractMapping(contractAddress).call({})
+    $('#confirm-cost').text(contractData.originationFee);
+    $('#costConfirmationModal').modal();
+    $(document).on('click', '#confirmButton', function() {
+      $('#costConfirmationModal').modal('hide');
+      selectLendingContract(contractAddress, contractData.originationFee);
+    });
+  } else {
+    window.initiateLogin();
+  }
+}
+
+async function selectLendingContract(contractAddress, originationFee) {
   const tx = {
     to: CONTRACT_ADDRESS,
     from: web3.eth.defaultAccount,
-    value: Number(nodeCollateralAmount),
+    value: Number(originationFee * 1000000000000000000),
     gas: 6000000,
-    data: contract.methods.createLendingContract(split, nodeType, fee).encodeABI()
+    data: contract.methods.borrowerContractSelection(contractAddress).encodeABI()
   };
 
   web3.eth.accounts.signTransaction(tx, loginPrivateKey)
@@ -200,6 +247,158 @@ async function resetLendingContract() {
               console.log("Tx Has Been Mined: " + receipt);
               $(".status").html("TX Has Been Mined");
               $('#minedBlockTrackerModal').modal('hide');
+              refreshContractData();
+            });
+          } else {
+            console.log("There Was A Problem With TX");
+            $(".status").html("There Was A Problem With TX");
+          }
+        } else {
+          console.error(error);
+        }
+      });
+    });
+}
+
+window.abandonContractSetup = function(contractAddress){
+  resetContract(contractAddress, "borrower");
+}
+
+window.resetContractSetup = function(contractAddress){
+  resetContract(contractAddress, "lender");
+}
+
+async function resetContract(contractAddress, side) {
+  const contractData = await contract.methods.lendingContractMapping(contractAddress).call({})
+  var index;
+  if(side == "borrower") {
+    index = contractData.borrowerIndex;
+    $('#confirm-message').text("Abandon");
+  } else if(side == "lender") {
+    index = contractData.lenderIndex
+    $('#confirm-message').text("Reset");
+  }
+  $('#confirmationModal').modal();
+  $(document).on('click', '#generalConfirmButton', function() {
+    $('#confirmationModal').modal('hide');
+      resetLendingContract(index, side);
+  });
+}
+async function resetLendingContract(index, side) {
+  const tx = {
+    to: CONTRACT_ADDRESS,
+    from: web3.eth.defaultAccount,
+    gas: 6000000,
+    data: contract.methods.resetContract(index, side).encodeABI()
+  };
+
+  web3.eth.accounts.signTransaction(tx, loginPrivateKey)
+    .then(function(signedTransactionData) {
+      web3.eth.sendSignedTransaction(signedTransactionData.rawTransaction, function(error, result) {
+        if(!error) {
+          if(result) {
+            $('#minedBlockTrackerModal').modal();
+            waitForReceipt(result, function(receipt) {
+              console.log("Tx Has Been Mined: " + receipt);
+              $(".status").html("TX Has Been Mined");
+              $('#minedBlockTrackerModal').modal('hide');
+              refreshContractData();
+            });
+          } else {
+            console.log("There Was A Problem With TX");
+            $(".status").html("There Was A Problem With TX");
+          }
+        } else {
+          console.error(error);
+        }
+      });
+    });
+}
+
+window.removeContractSetup = function(contractAddress){
+  removeContract(contractAddress);
+}
+
+async function removeContract(contractAddress) {
+  const contractData = await contract.methods.lendingContractMapping(contractAddress).call({})
+  const index = contractData.lenderIndex;
+  $('#confirm-message').text("Remove");
+  $('#confirmationModal').modal();
+  $(document).on('click', '#generalConfirmButton', function() {
+    $('#confirmationModal').modal('hide');
+      removeLendingContract(index);
+  });
+}
+async function removeLendingContract(index) {
+  const tx = {
+    to: CONTRACT_ADDRESS,
+    from: web3.eth.defaultAccount,
+    gas: 6000000,
+    data: contract.methods.removeContract(index).encodeABI()
+  };
+
+  web3.eth.accounts.signTransaction(tx, loginPrivateKey)
+    .then(function(signedTransactionData) {
+      web3.eth.sendSignedTransaction(signedTransactionData.rawTransaction, function(error, result) {
+        if(!error) {
+          if(result) {
+            $('#minedBlockTrackerModal').modal();
+            waitForReceipt(result, function(receipt) {
+              console.log("Tx Has Been Mined: " + receipt);
+              $(".status").html("TX Has Been Mined");
+              $('#minedBlockTrackerModal').modal('hide');
+              refreshContractData();
+            });
+          } else {
+            console.log("There Was A Problem With TX");
+            $(".status").html("There Was A Problem With TX");
+          }
+        } else {
+          console.error(error);
+        }
+      });
+    });
+}
+
+window.verifyNodeSetup = function(contractAddress){
+  verifyNode(contractAddress);
+}
+
+async function verifyNode(contractAddress) {
+  const contractData = await contract.methods.lendingContractMapping(contractAddress).call({})
+  const index = contractData.lenderIndex;
+  $('#verifyNodeModal').modal();
+  $(document).on('click', '#verifyNodeConfirmButton', function() {
+    if(document.getElementById("verify-node-address") !== null) {
+      var to = document.getElementById("verify-node-address").value;
+      $('#verifyNodeModal').modal('hide');
+      verifyNodeContract(contractAddress, to);
+    }
+  });
+}
+async function verifyNodeContract(contractAddress, to) {
+  const bnValue = web3.utils.toBN(100000000000000000);
+  const sendValue = web3.utils.toHex(bnValue);
+  const tx = {
+    to: CONTRACT_ADDRESS,
+    from: web3.eth.defaultAccount,
+    gas: 6000000,
+    data: contract.methods.contractBorrowerTransfer(contractAddress, to, sendValue).encodeABI()
+  };
+
+  web3.eth.accounts.signTransaction(tx, loginPrivateKey)
+    .then(function(signedTransactionData) {
+      web3.eth.sendSignedTransaction(signedTransactionData.rawTransaction, function(error, result) {
+        if(!error) {
+          if(result) {
+            $('#minedBlockTrackerModal').modal();
+            waitForReceipt(result, function(receipt) {
+              console.log("Tx Has Been Mined: " + receipt);
+              $(".status").html("TX Has Been Mined");
+              $('#minedBlockTrackerModal').modal('hide');
+              $('#verification-tx-hash').text(receipt.transactionHash);
+              $('#transactionHashModal').modal();
+              refreshContractData();
             });
           } else {
             console.log("There Was A Problem With TX");
@@ -238,18 +437,29 @@ function waitForReceipt(hash, cb) {
 }
 
 function getCollateralAmount(nodeType) {
+  var ethoValue;
   if(nodeType == "GN") {
-    //return 30000000000000000000000;
-    return 3000000000000000000;
+    ethoValue = 30000;
   } else if(nodeType == "MN") {
-    //return 15000000000000000000000;
-    return 2000000000000000000;
+    ethoValue = 15000;
   } else if(nodeType == "SN") {
-    //return 5000000000000000000000;
-    return 1000000000000000000;
+    ethoValue = 5000;
   }
+  var weiValue = web3.utils.toWei(ethoValue.toString(), 'ether')
+  return web3.utils.toBN(weiValue);
 }
 
+function getNodeTypeString(nodeType) {
+  var nodeTypeString;
+  if(nodeType == "GN") {
+    nodeTypeString = "Gateway Node";
+  } else if(nodeType == "MN") {
+    nodeTypeString = "Masternode";
+  } else if(nodeType == "SN") {
+    nodeTypeString = "Service Node";
+  }
+  return nodeTypeString;
+}
 callContract();
 
 },{"web3":336}],2:[function(require,module,exports){
