@@ -193,35 +193,17 @@ contract LenderManagement {
         }
         return lendingContractsMappingByBorrower[userAddress][index].lendingContractAddress;
     }
-    
-    function getContractCollateralAmount(address lenderAddress, uint index) public view returns (uint) {
-        address contractLookup = lendingContractsMappingByLender[lenderAddress][index].lendingContractAddress;
-        return NodeLender(contractLookup).nodeCollateralAmount();
-    }
-    
-    function getContractCollateralAmount(uint index) public view returns (uint) {
-        address contractLookup = lendingContractCountMapping[index].lendingContractAddress;
-        return NodeLender(contractLookup).nodeCollateralAmount();
+
+    function getContractCollateralAmount(address contractAddress) public view returns (uint) {
+        return NodeLender(contractAddress).nodeCollateralAmount();
     }
 
-    function getContractLastPaid(address lenderAddress, uint index) public view returns (uint) {
-        address contractLookup = lendingContractsMappingByLender[lenderAddress][index].lendingContractAddress;
-        return NodeLender(contractLookup).lastPaid();
-    }
-
-    function getContractLastPaid(uint index) public view returns (uint) {
-        address contractLookup = lendingContractCountMapping[index].lendingContractAddress;
-        return NodeLender(contractLookup).lastPaid();
+    function getContractLastPaid(address contractAddress) public view returns (uint) {
+        return NodeLender(contractAddress).lastPaid();
     }   
-       
-    function getContractLastReward(address lenderAddress, uint index) public view returns (uint) {
-        address contractLookup = lendingContractsMappingByLender[lenderAddress][index].lendingContractAddress;
-        return NodeLender(contractLookup).lastRewardAmount();
-    }
 
-    function getContractLastReward(uint index) public view returns (uint) {
-        address contractLookup = lendingContractCountMapping[index].lendingContractAddress;
-        return NodeLender(contractLookup).lastRewardAmount();
+    function getContractLastReward(address contractAddress) public view returns (uint) {
+        return NodeLender(contractAddress).lastRewardAmount();
     }  
        
     function contractBorrowerTransfer(address contractAddress, address to, uint value) public returns (bool) {
@@ -263,7 +245,6 @@ contract NodeLender {
 
     // On Deployment - A Split of 10 Means 10% Lender Split
     constructor(uint split, string contractType, uint fee) public payable {
-        assert(fee > 100);
         lender = tx.origin;
         lenderSplit = split;
         paymentThreshold = 100;
@@ -285,14 +266,16 @@ contract NodeLender {
     }
 
     function disperseRewards() public {
-        int dispersalAmount = int(address(this).balance) - (int(nodeCollateralAmount) + int(originationFee * (1 ether)));
-        if(dispersalAmount > 0) {
-            uint lenderPayment = uint(dispersalAmount / 100) * lenderSplit;
-            uint borrowerPayment = (uint(dispersalAmount) - lenderPayment);
-            lender.transfer(lenderPayment);
-            borrower.transfer(borrowerPayment);
-            lastPaid = block.number;
-            lastRewardAmount = uint(dispersalAmount);
+        if(!available && borrower != address(0)) {
+            int dispersalAmount = int(address(this).balance) - (int(nodeCollateralAmount) + int(originationFee * (1 ether)));
+            if(dispersalAmount > 0) {
+                uint lenderPayment = uint(dispersalAmount / 100) * lenderSplit;
+                uint borrowerPayment = (uint(dispersalAmount) - lenderPayment);
+                lender.transfer(lenderPayment);
+                borrower.transfer(borrowerPayment);
+                lastPaid = block.number;
+                lastRewardAmount = uint(dispersalAmount);
+            }
         }
     }
     
@@ -308,7 +291,7 @@ contract NodeLender {
 
     // Will refund 90% origination fee if lender cancels within 50000 blocks of borrower agreement
     function resetContract() public lenderOrBorrower() {
-        assert(!available && borrower != address(0));
+        assert(!available);
         if(tx.origin == lender) {
             if((block.number - borrowerDeploymentBlock) < 50000) {
                 borrower.transfer(((originationFee / 100) * 90) * (1 ether));
@@ -323,7 +306,7 @@ contract NodeLender {
     }
     
     function deleteContract() public onlyLender() {
-        if((block.number - borrowerDeploymentBlock) < 50000 && !available && borrower != address(0)) {
+        if((block.number - borrowerDeploymentBlock) < 50000 && !available) {
             borrower.transfer(originationFee * (1 ether));
         }
         selfdestruct(lender);
@@ -335,14 +318,6 @@ contract NodeLender {
         borrowerDeploymentBlock = block.number;
         return true;
     }
-
-    /*function getOriginationFee() public view returns (uint) {
-        return originationFee;
-    }
-
-    function getCollateralAmount() public view returns (uint) {
-        return nodeCollateralAmount;
-    }*/
 
     modifier onlyLender {
         require(
