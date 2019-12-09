@@ -6,6 +6,7 @@ var contract;
 var loginAddress;
 var loginPrivateKey;
 var loggedInFlag = false;
+var contractDataArray = [];
 
 $(document).on('click', '#help-button', function() {
   $('#helpModal').modal();
@@ -79,6 +80,7 @@ async function callAvailableData(contract, totalContractCount) {
     var totalAvailable = 0;
     for (var i = 0; i < totalContractCount; i++) {
       const contractData = await contract.methods.lendingContractCountMapping(i).call({})
+      contractDataArray.push(contractData); //Save contract data for sorting
       const contractCollateralAmount = await contract.methods.getContractCollateralAmount(contractData.lendingContractAddress).call({})
       totalLending += Number(contractCollateralAmount);
       if(contractData.available == true) {
@@ -108,6 +110,52 @@ async function callAvailableData(contract, totalContractCount) {
   }
   if(!data) {
     $('#available-data-table').append('<div class="row"><div class="cell" data-title="Node Type">No Contract Data Found</div></div>');
+  }
+}
+
+function sortContractData(sortItem) {
+  function compareString(a, b) {
+    var itemA;
+    var itemB;
+    if(sortItem == "nodeType") {
+      itemA = a.nodeType.toUpperCase();
+      itemB = b.nodeType.toUpperCase();
+    } else if(sortItem == "lenderAddress") {
+      itemA = a.lenderAddress.toUpperCase();
+      itemB = b.lenderAddress.toUpperCase();
+    }
+    let comparison = 0;
+    if(itemA > itemB) {
+      comparison = 1;
+    } else if(itemA < itemB) {
+      comparison = -1;
+    }
+    return comparison;
+  }
+
+  function compareNumber(a, b) {
+    var itemA;
+    var itemB;
+    if(sortItem == "lenderSplit") {
+      itemA = a.lenderSplit;
+      itemB = b.lenderSplit;
+    } else if(sortItem == "originationFee") {
+      itemA = a.originationFee;
+      itemB = b.originationFee;
+    }
+    let comparison = 0;
+    if(itemA > itemB) {
+      comparison = 1;
+    } else if(itemA < itemB) {
+      comparison = -1;
+    }
+    return comparison;
+  }
+
+  if(sortItem == "nodetype" || sortItem == "lenderAddress") {
+    contractDataArray.sort(compareString).then(sortAvailableDataTable());
+  } else if(sortIterm == "lenderAddress" || sortItem == "originationFee") {
+    contractDataArray.sort(compareNumber).then(sortAvailableDataTable());
   }
 }
 
