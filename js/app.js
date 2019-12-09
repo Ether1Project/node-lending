@@ -7,6 +7,10 @@ var loginAddress;
 var loginPrivateKey;
 var loggedInFlag = false;
 
+$(document).on('click', '#help-button', function() {
+  $('#helpModal').modal();
+});
+
 window.initiateLogin = function(){
   $('#modalLogin').modal();
   $(document).on('click', '#loginModalButton', function() {

@@ -38,6 +38,9 @@
 							<div class="cell" style="float: right; padding-right: 10px; padding-left: 10px;">
 							       <button type="button" class="btn btn-primary" onclick="window.initiateLogin();">Login</button>
 							</div>
+							<div class="cell" style="float: right; padding-right: 10px; padding-left: 10px;">
+							       <button type="button" class="btn btn-primary" id="help-button">Help</button>
+							</div>
 
 						<div class="row header" id="available-header1">
 							<div class="cell">
@@ -324,6 +327,53 @@
   </div>
 </div>
 <!-- Modal: confirmModal -->
+
+<!-- Modal: helpModal -->
+<div class="modal fade" id="helpModal" tabindex="-1" role="dialog" aria-labelledby="helpModal"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header">
+        <h4 class="modal-title" id="helpModalTitle">Ether-1 Staking Dashboard Help</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body">
+
+        <table class="table table-hover">
+          <tbody>
+            <div class="md-form mb-5">
+	      <br>
+              <h4 class="modal-title" style="font-size: 20px;">Become an &nbsp<span id="etho-message" style="color: #9c2877; font-weight: bold;">ETHO</span>&nbsp Lender</h4>
+	      <ol>
+                <li><b>1.</b> Login with your private key</li>
+                <li><b>2.</b> Click “Add Contract”</li>
+                <li><b>3.</b> Select desired fees and submit</li>
+              </ol>
+              <hr>
+              <h4 class="modal-title" style="font-size: 20px;">Become an &nbsp<span id="etho-message" style="color: #9c2877; font-weight: bold;">ETHO</span>&nbsp Borrower</h4>
+	      <ol>
+                <li><b>1.</b> Login with your private key</li>
+                <li><b>2.</b> Select desired available contract</li>
+                <li><b>3.</b> Confirm fee payment and submit to reserve contract</li>
+                <li><b>4.</b> Setup your node at <a href="https://nodes.ether1.org/">https://nodes.ether1.org</a></li>
+                <li><b>5.</b> Use your staking dashboard to send node verification tx (click “Send TX” button) and enter verification address from node dashboard registration. Use resulting tx hash for verification</li>
+              </ol>
+            </div>
+          </tbody>
+        </table>	
+      </div>
+      <!--Footer-->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" style="border-color: #840032; background-color: #840032;">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal: helpModal -->
 
 <!-- Modal: transactionHashModal -->
 <div class="modal fade" id="transactionHashModal" tabindex="-1" role="dialog" aria-labelledby="transactionHashModal"
