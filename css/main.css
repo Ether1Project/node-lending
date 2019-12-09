@@ -1,9 +1,5 @@
-
-
 /*//////////////////////////////////////////////////////////////////
 [ FONT ]*/
-
-
 @font-face {
   font-family: Poppins-Regular;
   src: url('../fonts/poppins/Poppins-Regular.ttf');
@@ -17,49 +13,52 @@
 /*//////////////////////////////////////////////////////////////////
 [ RESTYLE TAG ]*/
 * {
-	margin: 0px;
-	padding: 0px;
-	box-sizing: border-box;
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
 }
 
 body, html {
-	height: 100%;
-	font-family: sans-serif;
+  height: 100%;
+  font-family: sans-serif;
 }
 
 /* ------------------------------------ */
 a {
-	margin: 0px;
-	transition: all 0.4s;
-	-webkit-transition: all 0.4s;
+  margin: 0px;
+  transition: all 0.4s;
+  -webkit-transition: all 0.4s;
   -o-transition: all 0.4s;
   -moz-transition: all 0.4s;
 }
 
 a:focus {
-	outline: none !important;
+  outline: none !important;
 }
 
 a:hover {
-	text-decoration: none;
+  text-decoration: none;
 }
 
 /* ------------------------------------ */
-h1,h2,h3,h4,h5,h6 {margin: 0px;}
-
-p {margin: 0px;}
-
-ul, li {
-	margin: 0px;
-	list-style-type: none;
+h1, h2, h3, h4, h5, h6 {
+  margin: 0px;
 }
 
+p {
+  margin: 0px;
+}
+
+ul, li {
+  margin: 0px;
+  list-style-type: none;
+}
 
 /* ------------------------------------ */
 input {
   display: block;
-	outline: none;
-	border: none !important;
+  outline: none;
+  border: none !important;
 }
 
 textarea {
@@ -73,23 +72,21 @@ textarea:focus, input:focus {
 
 /* ------------------------------------ */
 button {
-	outline: none !important;
-	border: none;
-	background: transparent;
+  outline: none !important;
+  border: none;
+  background: transparent;
 }
 
 button:hover {
-	cursor: pointer;
+  cursor: pointer;
 }
 
 iframe {
-	border: none !important;
+  border: none !important;
 }
-
 
 /*//////////////////////////////////////////////////////////////////
 [ Table ]*/
-
 .limiter {
   width: 100%;
   margin: 0 auto;
@@ -99,7 +96,6 @@ iframe {
   width: 100%;
   min-height: 100vh;
   background: #f8faff;
-
   display: -webkit-box;
   display: -webkit-flex;
   display: -moz-box;
@@ -156,11 +152,10 @@ iframe {
   .row .cell:before {
     font-family: Poppins-Bold;
     font-size: 12px;
-    color: #808080;
+    color: #00;
     line-height: 1.2;
     text-transform: uppercase;
     font-weight: unset !important;
-
     margin-bottom: 13px;
     content: attr(data-title);
     min-width: 98px;
@@ -184,7 +179,6 @@ iframe {
   color: #000;
   line-height: 1.2;
   font-weight: unset !important;
-
   padding-top: 20px;
   padding-bottom: 20px;
   border-bottom: 1px solid #f2f2f2;
@@ -196,7 +190,6 @@ iframe {
   color: #840032;
   line-height: 1.2;
   font-weight: unset !important;
-
   padding-top: 20px;
   padding-bottom: 20px;
   border-bottom: 1px solid #f2f2f2;
@@ -208,7 +201,6 @@ iframe {
   color: #fff;
   line-height: 1.2;
   font-weight: unset !important;
-
   padding-top: 19px;
   padding-bottom: 19px;
 }
@@ -230,13 +222,12 @@ iframe {
   width: 190px;
 }
 
-
 .table, .row {
   width: 100% !important;
 }
 
 .row:hover {
-  background-color: #54545f;
+  background-color: #9c9c9c;
   cursor: pointer;
 }
 
@@ -255,6 +246,7 @@ iframe {
     padding-top: 16px;
     padding-bottom: 16px;
   }
+
   .row .cell:nth-child(1) {
     padding-left: 30px;
   }
@@ -262,12 +254,13 @@ iframe {
   .row .cell {
     font-family: Poppins-Regular;
     font-size: 18px;
-    color: #555555;
+    color: #000;
     line-height: 1.2;
     font-weight: unset !important;
+    word-break: break-all;
   }
 
   .table, .row, .cell {
-    width: 100% !important;
+    /*width: 100% !important;*/
   }
 }
