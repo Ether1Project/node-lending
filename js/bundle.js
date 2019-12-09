@@ -76,15 +76,19 @@ async function callAvailableData(contract, totalContractCount) {
   if(totalContractCount > 0) {
     $('#available-data-table').children().not('#available-header1, #available-header2').remove();
     var data = false;
+    var totalLending = 0;
+    var totalAvailable = 0;
     for (var i = 0; i < totalContractCount; i++) {
       const contractData = await contract.methods.lendingContractCountMapping(i).call({})
+      const contractCollateralAmount = await contract.methods.getContractCollateralAmount(contractData.lendingContractAddress).call({})
+      totalLending += Number(contractCollateralAmount);
       if(contractData.available == true) {
+        totalAvailable += Number(contractCollateralAmount);
         data = true;
         const contractAddress = contractData.lendingContractAddress;
         const contractNodeType = getNodeTypeString(contractData.nodeType);
         const contractLenderAddress = contractData.lenderAddress;
         const contractLenderSplit = contractData.lenderSplit;
-        const contractCollateralAmount = await contract.methods.getContractCollateralAmount(contractAddress).call({})
         const contractLenderFee = contractData.originationFee;
         var contractAvailability;
         if(contractData.available == true) {
@@ -96,6 +100,12 @@ async function callAvailableData(contract, totalContractCount) {
         $('#available-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" onclick="window.selectContractSetup(\'' + contractAddress + '\');">Select</button></div></div>');
       }
     }
+    var totalLendingString = (totalLending / 1000000000000000000).toFixed(2);
+    var totalAvailableString = (totalAvailable / 1000000000000000000).toFixed(2);
+    console.log("Total Collateral in Lending System: ", totalLendingString);
+    console.log("Total Collateral in Available Contracts: ", totalAvailableString);
+    $('#total-lending').text("Total Collateral Lent: " + totalLendingString + " ETHO");
+    $('#total-available').text("Total Collateral Available: " + totalAvailableString + " ETHO");
   }
   if(!data) {
     $('#available-data-table').append('<div class="row"><div class="cell" data-title="Node Type">No Contract Data Found</div></div>');
