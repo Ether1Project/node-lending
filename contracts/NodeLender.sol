@@ -8,12 +8,21 @@ contract LenderManagement {
     mapping(address => lendingContract) public lendingContractMapping;
     mapping(uint => lendingContract) public lendingContractCountMapping;
     
+    mapping(address => contractMessaging[]) public lenderContractMessaging;
+    
     uint public lendingContractCount;
     uint public gnCollateralRequirement;
     uint public mnCollateralRequirement;
     uint public snCollateralRequirement;
     
     uint public minOriginationFee;
+    
+    struct contractMessaging {
+        address lendingContractAddress;
+        string message;
+        uint blockHeight;
+        string side;
+    }
     
     struct lendingContract {
         string nodeType;
@@ -26,6 +35,7 @@ contract LenderManagement {
         uint originationFee;
         bool available;
         uint lenderSplit;
+        string text;
     }
     
     constructor() public {
@@ -37,8 +47,8 @@ contract LenderManagement {
     }
     
     // This function is used to deploy a new lending contract - fee is desired origination fee
-    function createLendingContract (uint split, string nodeType, uint fee) public payable {
-        assert(keccak256(nodeType) == keccak256("GN") || keccak256(nodeType) == keccak256("MN") || keccak256(nodeType) == keccak256("SN") && fee >= minOriginationFee);
+    function createLendingContract (uint split, string nodeType, uint fee, string contractText) public payable {
+        require(keccak256(nodeType) == keccak256("GN") || keccak256(nodeType) == keccak256("MN") || keccak256(nodeType) == keccak256("SN") && fee >= minOriginationFee);
 
         if(keccak256(nodeType) == keccak256("GN")){ assert(msg.value == (gnCollateralRequirement * (1 ether))); }
         else if(keccak256(nodeType) == keccak256("MN")){ assert(msg.value == (mnCollateralRequirement * (1 ether))); }
@@ -46,7 +56,7 @@ contract LenderManagement {
         
         address newLendingContract = (new NodeLender).value(msg.value)(split, nodeType, fee);
         
-        lendingContract memory newContract = lendingContract({nodeType:nodeType, index:lendingContractCount, lenderIndex:lenderCountMapping[msg.sender], borrowerIndex:0, lenderAddress:msg.sender, borrowerAddress:address(0), lendingContractAddress:newLendingContract, originationFee:fee, available:true, lenderSplit:split});
+        lendingContract memory newContract = lendingContract({nodeType:nodeType, index:lendingContractCount, lenderIndex:lenderCountMapping[msg.sender], borrowerIndex:0, lenderAddress:msg.sender, borrowerAddress:address(0), lendingContractAddress:newLendingContract, originationFee:fee, available:true, lenderSplit:split, text:contractText});
         lendingContractsMappingByLender[msg.sender][lenderCountMapping[msg.sender]] = newContract;
         lenderCountMapping[msg.sender]++;
         
@@ -54,6 +64,12 @@ contract LenderManagement {
         lendingContractCountMapping[lendingContractCount] = newContract;
         lendingContractCount++;
     } 
+    
+    function addContractMessage(address contractAddress, string contractMessage, string messageSide) public {
+        require(lendingContractMapping[msg.sender].lenderAddress == msg.sender || lendingContractMapping[msg.sender].borrowerAddress == msg.sender);
+        contractMessaging memory newMessage = contractMessaging({lendingContractAddress:contractAddress, message:contractMessage, blockHeight:block.number, side:messageSide});
+        lenderContractMessaging[msg.sender].push(newMessage);
+    }
     
     // This function is used for a borrower to select an available contract
     function borrowerContractSelection(address contractAddress) public payable {
@@ -123,7 +139,7 @@ contract LenderManagement {
     }
     
     function resetContract(uint index, string side) public {
-	    assert(keccak256(side) == keccak256("lender") || keccak256(side) == keccak256("borrower"));
+	    (keccak256(side) == keccak256("lender") || keccak256(side) == keccak256("borrower"));
         address borrowerAddress;
 	    address lenderAddress;
 	    uint lenderIndex;
@@ -143,7 +159,6 @@ contract LenderManagement {
 		    mainIndex = lendingContractsMappingByLender[msg.sender][index].index;
 		    contractLookup = lendingContractsMappingByLender[msg.sender][index].lendingContractAddress;
 	    }
-	    assert(msg.sender == lenderAddress || msg.sender == borrowerAddress);
 
 	    lendingContractsMappingByLender[lenderAddress][lenderIndex].available = true;
     	lendingContractsMappingByLender[lenderAddress][lenderIndex].borrowerAddress = address(0);
@@ -155,7 +170,7 @@ contract LenderManagement {
         uint borrowerIndex = lendingContractsMappingByLender[lenderAddress][lenderIndex].borrowerIndex;
         uint borrowerCount = borrowerCountMapping[borrowerAddress];
 
-	rotateLastBorrowerContract(borrowerAddress, borrowerIndex, borrowerCount, lenderIndex, mainIndex);
+	    rotateLastBorrowerContract(borrowerAddress, borrowerIndex, borrowerCount, lenderIndex, mainIndex);
         delete lendingContractsMappingByBorrower[borrowerAddress][borrowerCount - 1];
         borrowerCountMapping[borrowerAddress]--;
         NodeLender(contractLookup).resetContract();
@@ -187,7 +202,7 @@ contract LenderManagement {
     }
 
     function getContractAddress(address userAddress, uint index, string side) public view returns (address) {
-        assert(keccak256(side) == keccak256("lender") || keccak256(side) == keccak256("borrower"));
+        require(keccak256(side) == keccak256("lender") || keccak256(side) == keccak256("borrower"));
         if(keccak256(side) == keccak256("lender")) {
             return lendingContractsMappingByLender[userAddress][index].lendingContractAddress;
         }
@@ -206,6 +221,18 @@ contract LenderManagement {
         return NodeLender(contractAddress).lastRewardAmount();
     }  
        
+    function setGnCollateralAmount(uint amount) public onlyOwner () {
+        gnCollateralRequirement = amount;
+    }
+    
+    function setMnCollateralAmount(uint amount) public onlyOwner () {
+        mnCollateralRequirement = amount;
+    }
+    
+    function setSnCollateralAmount(uint amount) public onlyOwner () {
+        snCollateralRequirement = amount;
+    }
+    
     function contractBorrowerTransfer(address contractAddress, address to, uint value) public returns (bool) {
         return NodeLender(contractAddress).borrowerTransfer(to, value);
     }
@@ -220,6 +247,13 @@ contract LenderManagement {
              address contractLookup = lendingContractCountMapping[indexTracker].lendingContractAddress;
              NodeLender(contractLookup).disperseRewards();
         }
+    }
+    
+     modifier onlyOwner {
+        require(
+            tx.origin == owner
+        );
+        _;
     }
 }
 
@@ -281,7 +315,7 @@ contract NodeLender {
     
     // borrowerTransfer allows borrower to send a tx to verify node (must be less than 1 etho) - value is in wei
     function borrowerTransfer(address to, uint value) public lenderOrBorrower returns (bool) {
-        assert(address(this).balance >= value && value < (1 ether) && borrowerTxAllowance[borrower] < 5);
+        require(address(this).balance >= value && value < (1 ether) && borrowerTxAllowance[borrower] < 3);
         borrowerTxAllowance[borrower]++;
         to.transfer(value);
         emit logSender(address(this));
@@ -289,12 +323,17 @@ contract NodeLender {
         return true;
     }
 
-    // Will refund 90% origination fee if lender cancels within 50000 blocks of borrower agreement
+    // Will refund 95% origination fee if lender cancels within 50000 blocks of borrower agreement
+    // Will not let lender reset if active and inside 200000 blocks from deployment
     function resetContract() public lenderOrBorrower() {
-        assert(!available);
         if(tx.origin == lender) {
+            require(!available && (block.number - borrowerDeploymentBlock) > 50000 && ((block.number - borrowerDeploymentBlock) > 200000 || (block.number - lastPaid) > 10000 || lastPaid == 0));
+        } else if (tx.origin == borrower) {
+            require(!available);
+        }
+        if(tx.origin == lender) {
+            borrower.transfer(((originationFee / 100) * 95) * (1 ether));
             if((block.number - borrowerDeploymentBlock) < 50000) {
-                borrower.transfer(((originationFee / 100) * 90) * (1 ether));
             } else {
                 borrowerTxAllowance[borrower] = 0;
             }        
@@ -302,20 +341,24 @@ contract NodeLender {
         borrowerDeploymentBlock = 0;        
         available = true;
         borrower = address(0);
-        lastPaid = 0;  
+        lastPaid = 0;
     }
     
+    // Lender cannot delete a borrower selected contract unless older than 200000 blocks or inactive after 50000 blocks
+    // Lender can delete if contract is not yet selected
     function deleteContract() public onlyLender() {
-        if((block.number - borrowerDeploymentBlock) < 50000 && !available) {
-            borrower.transfer(originationFee * (1 ether));
+        if(!available) {
+            require((block.number - borrowerDeploymentBlock) > 50000 && ((block.number - borrowerDeploymentBlock) > 200000 || (block.number - lastPaid) > 10000 || lastPaid == 0));
+            borrower.transfer(((originationFee / 100) * 95) * (1 ether));
         }
         selfdestruct(lender);
     }
     
     function setBorrower(address newBorrower) payable public returns (bool) {
-        assert(available && msg.value == (originationFee * (1 ether)));
+        require(available && msg.value == (originationFee * (1 ether)));
         borrower = newBorrower;
         borrowerDeploymentBlock = block.number;
+        available = false;
         return true;
     }
 
