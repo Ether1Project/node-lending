@@ -261,6 +261,7 @@ contract NodeLender {
 
     address public lender;
     address public borrower;
+    address public controller;
 
     uint public paymentThreshold;
     uint public lenderSplit;
@@ -280,6 +281,7 @@ contract NodeLender {
     // On Deployment - A Split of 10 Means 10% Lender Split
     constructor(uint split, string contractType, uint fee) public payable {
         lender = tx.origin;
+        controller = msg.sender;
         lenderSplit = split;
         paymentThreshold = 100;
         nodeType = contractType;
@@ -355,7 +357,7 @@ contract NodeLender {
     }
     
     function setBorrower(address newBorrower) payable public returns (bool) {
-        require(available && msg.value == (originationFee * (1 ether)));
+        require(available && msg.sender == controller && msg.value == (originationFee * (1 ether)));
         borrower = newBorrower;
         borrowerDeploymentBlock = block.number;
         available = false;
