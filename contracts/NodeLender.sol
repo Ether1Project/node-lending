@@ -70,7 +70,15 @@ contract LenderManagement {
         contractMessaging memory newMessage = contractMessaging({lendingContractAddress:contractAddress, message:contractMessage, blockHeight:block.number, side:messageSide});
         lenderContractMessaging[msg.sender].push(newMessage);
     }
-    
+
+    function getContractMessage(uint index) public view returns(string){
+        return lenderContractMessaging[index];
+    }
+
+    function totalContractMessages() public view returns (uint){
+        return lenderContractMessaging.length;
+    }
+
     // This function is used for a borrower to select an available contract
     function borrowerContractSelection(address contractAddress) public payable {
         require(lendingContractMapping[contractAddress].available == true && NodeLender(contractAddress).setBorrower.value(msg.value)(msg.sender));
