@@ -303,22 +303,16 @@ window.newLendingContractSetup = function(){
   $('#modalNewContractSetup').modal();
   var nodeType = document.getElementById("node-type-selection").value;
   var ethoCollateralAmount;
-  //if(nodeType == "GN") { ethoCollateralAmount = 30000; }
-  //else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
-  //else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
-  if(nodeType == "GN") { ethoCollateralAmount = 3000; }
-  else if(nodeType == "MN") { ethoCollateralAmount = 1500; }
-  else if(nodeType == "SN") { ethoCollateralAmount = 500; }
+  if(nodeType == "GN") { ethoCollateralAmount = 30000; }
+  else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
+  else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
   $('#required-collateral').text(ethoCollateralAmount);
 
   $(document).on('change', '#node-type-selection', function() {
     nodeType = document.getElementById("node-type-selection").value;
-    //if(nodeType == "GN") { ethoCollateralAmount = 30000; }
-    //else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
-    //else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
-    if(nodeType == "GN") { ethoCollateralAmount = 3000; }
-    else if(nodeType == "MN") { ethoCollateralAmount = 1500; }
-    else if(nodeType == "SN") { ethoCollateralAmount = 500; }
+    if(nodeType == "GN") { ethoCollateralAmount = 30000; }
+    else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
+    else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
     $('#required-collateral').text(ethoCollateralAmount);
   });
   $(document).on('click', '#submitNewContractButton', function() {
@@ -596,19 +590,12 @@ function waitForReceipt(hash, cb) {
 
 function getCollateralAmount(nodeType) {
   var ethoValue;
-/*  if(nodeType == "GN") {
+  if(nodeType == "GN") {
     ethoValue = 30000;
   } else if(nodeType == "MN") {
     ethoValue = 15000;
   } else if(nodeType == "SN") {
     ethoValue = 5000;
-  }*/
-  if(nodeType == "GN") {
-    ethoValue = 3000;
-  } else if(nodeType == "MN") {
-    ethoValue = 1500;
-  } else if(nodeType == "SN") {
-    ethoValue = 500;
   }
   var weiValue = web3.utils.toWei(ethoValue.toString(), 'ether')
   return web3.utils.toBN(weiValue);
