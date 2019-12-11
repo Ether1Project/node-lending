@@ -19,6 +19,7 @@
 <!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="css/util.css">
 	<link rel="stylesheet" type="text/css" href="css/main.css">
+
 <!--===============================================================================================-->
 </head>
 <body>
@@ -28,7 +29,7 @@
 			<div class="wrap-table100">
 						<div class="row header">
 							<div class="cell" style="width: 500px; height: 100px; background-color: #362f31;">
-                                                        <img src="https://ethofs.com/index/images/logo.png"></img>
+                                                        <img src="https://raw.githubusercontent.com/Ether1Project/Ether-1-Branding/master/PNG%20Logos/ethofsstakingdark.png"></img>
 								<h3 style="padding: 15px;">Staking Market (Beta Testing)</h3>
                                                                 <h4 style="font-size: 18px;"><span id="total-lending"></span></h4>
                                                                 <h4 style="font-size: 18px;"><span id="total-available"></span></h4>
@@ -39,6 +40,9 @@
 
 							<div class="cell" style="float: right; padding-right: 10px; padding-left: 10px;">
 							       <button type="button" class="btn btn-primary" onclick="window.initiateLogin();">Login</button>
+							</div>
+							<div class="cell" style="float: right; padding-right: 10px; padding-left: 10px;">
+							       <button type="button" class="btn btn-primary" id="terms-button">Terms</button>
 							</div>
 							<div class="cell" style="float: right; padding-right: 10px; padding-left: 10px;">
 							       <button type="button" class="btn btn-primary" id="help-button">Help</button>
@@ -108,7 +112,9 @@
 							<div class="cell" style="padding-right: 50px;">
                                                         &nbsp
 							</div>
-
+							<div class="cell" style="padding-right: 50px;">
+                                                        &nbsp
+							</div>
 							<div class="cell" style="padding-right: 50px;">
                                                         &nbsp
 							</div>
@@ -189,6 +195,86 @@
   </div>
 </div>
 <!-- Modal: modalLogin -->
+
+<!-- Modal: modalDetails -->
+<div class="modal fade" id="modalDetails" tabindex="-1" role="dialog" aria-labelledby="modalDetails"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header">
+        <h4 class="modal-title" id="detailsModalTitle">Contract Details</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body">
+
+        <table class="table table-hover">
+          <tbody>
+              <div class="md-form mb-5">
+              <label data-error="wrong" data-success="right" for="node-type">Node Type:</label>
+              <div style="background-color: #e0dce0;"><span id="node-type"></span></div>
+              <hr>
+              <label data-error="wrong" data-success="right" for="contract-contact">Lender Contact Info:</label>
+              <div style="background-color: #e0dce0;"><span id="contract-contact"></span></div>
+              <hr>
+              <label data-error="wrong" data-success="right" for="contract-text">Additional Terms/Details:</label>
+              <div style="background-color: #e0dce0;"><span id="contract-text"></span></div>
+            </div>
+          </tbody>
+        </table>
+
+      </div>
+      <!--Footer-->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" style="border-color: #840032; background-color: #840032;">Close</button>
+        <button type="button" class="btn btn-primary" id="loginModalButton" style="border-color: #840032; background-color: #840032;">Login</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal: modalDetails -->
+
+<!-- Modal: modalMessage -->
+<div class="modal fade" id="modalMessage" tabindex="-1" role="dialog" aria-labelledby="modalMessage"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header">
+        <h4 class="modal-title" id="loginModalTitle">Borrower/Lender Messaging</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body">
+
+        <table class="table table-hover">
+          <tbody>
+              <div class="md-form mb-5">
+                <label data-error="wrong" data-success="right" for="new-message">Messages:</label>
+                <div id="message-data-table" style="background-color: #e0dce0; overflow-y:auto; height:200px;"></div>
+              </div>
+              <div class="md-form mb-5">
+                <label data-error="wrong" data-success="right" for="new-message">Enter Message:</label>
+                <textarea name="new-message" id="new-message" rows="5" style="background-color: #ffffff; width:100%;"></textarea>
+            </div>
+          </tbody>
+        </table>
+
+      </div>
+      <!--Footer-->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" style="border-color: #840032; background-color: #840032;">Close</button>
+        <button type="button" class="btn btn-primary" id="sendMessageModalButton" style="border-color: #840032; background-color: #840032;">Send Message</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal: modalMessage -->
 
 <!-- Modal: verifyNodeModal -->
 <div class="modal fade" id="verifyNodeModal" tabindex="-1" role="dialog" aria-labelledby="verifyNodeModal"
@@ -337,7 +423,7 @@
     <div class="modal-content">
       <!--Header-->
       <div class="modal-header">
-        <h4 class="modal-title" id="helpModalTitle">Ether-1 Staking Dashboard Help</h4>
+        <h4 class="modal-title" id="helpModalTitle">Ether-1 Staking/Lending Help</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">×</span>
         </button>
@@ -376,6 +462,46 @@
   </div>
 </div>
 <!-- Modal: helpModal -->
+
+<!-- Modal: termsModal -->
+<div class="modal fade" id="termsModal" tabindex="-1" role="dialog" aria-labelledby="termsModal"
+  aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <!--Header-->
+      <div class="modal-header">
+        <h4 class="modal-title" id="termsModalTitle">Ether-1 Staking/Lending Terms & Conditions</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+      <!--Body-->
+      <div class="modal-body">
+
+        <table class="table table-hover">
+          <tbody>
+            <div class="md-form mb-5">
+	      <br>
+              <h4 class="modal-title" style="font-size: 20px;">Terms & Conditions</h4>
+              <hr>
+	      <ol>
+                <li><b>1.</b> Both Node Lender and Node Borrower have the right to terminate this contract at any time for any reason.</li>
+                <li><b>2.</b> If Node Borrower does not setup paying node within 50000 blocks, Node Lender may revoke contract and receive Origination Fee.</li>
+                <li><b>3.</b> See #node-lending channel within <a href="https://discord.gg/MFn9Tmz">Ether-1 Discord Server</a> for specific mutually agreeable contract terms and conditions.</li>
+                <li><b>4.</b> Is it up to both the Node Lender and Node Borrower to regularly check on the status of the loan and the daily node payments.</li>
+              </ol>
+            </div>
+          </tbody>
+        </table>	
+      </div>
+      <!--Footer-->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" data-dismiss="modal" style="border-color: #840032; background-color: #840032;">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal: termsModal -->
 
 <!-- Modal: transactionHashModal -->
 <div class="modal fade" id="transactionHashModal" tabindex="-1" role="dialog" aria-labelledby="transactionHashModal"
@@ -476,6 +602,9 @@
                 <option value="29">29%</option>
                 <option value="30">30%</option>
               </select>
+              <hr><br>
+              <label data-error="wrong" data-success="right" for="new-message">Additional Terms/Information:</label>
+                <textarea name="additional-terms" id="additional-terms" rows="10" style="background-color: #ffffff; width:100%;"></textarea>
               <hr><br>
               <h4 class="modal-title" style="font-size: 20px;">Required Collateral For Contract Deployment:<br><span id="required-collateral" style="color: #9c2877; font-weight: bold;">30000</span>&nbsp ETHO</h4>
             </div>
