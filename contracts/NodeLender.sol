@@ -1,4 +1,5 @@
 pragma solidity 0.4.23;
+
 contract LenderManagement {
     address public owner;
     mapping(address => mapping(uint => lendingContract)) public lendingContractsMappingByLender;
@@ -8,7 +9,8 @@ contract LenderManagement {
     mapping(address => lendingContract) public lendingContractMapping;
     mapping(uint => lendingContract) public lendingContractCountMapping;
     
-    mapping(address => contractMessaging[]) public lenderContractMessaging;
+    mapping(address => mapping(uint => contractMessaging)) public lenderContractMessaging;
+    mapping(address => uint) public messageCountMapping;
     
     uint public lendingContractCount;
     uint public gnCollateralRequirement;
@@ -22,6 +24,7 @@ contract LenderManagement {
         string message;
         uint blockHeight;
         string side;
+        uint timestamp;
     }
     
     struct lendingContract {
@@ -66,17 +69,14 @@ contract LenderManagement {
     } 
     
     function addContractMessage(address contractAddress, string contractMessage, string messageSide) public {
-        require(lendingContractMapping[msg.sender].lenderAddress == msg.sender || lendingContractMapping[msg.sender].borrowerAddress == msg.sender);
-        contractMessaging memory newMessage = contractMessaging({lendingContractAddress:contractAddress, message:contractMessage, blockHeight:block.number, side:messageSide});
-        lenderContractMessaging[msg.sender].push(newMessage);
+        require(lendingContractMapping[contractAddress].lenderAddress == msg.sender || lendingContractMapping[contractAddress].borrowerAddress == msg.sender);
+        contractMessaging memory newMessage = contractMessaging({lendingContractAddress:contractAddress, message:contractMessage, blockHeight:block.number, side:messageSide, timestamp:block.timestamp});
+        lenderContractMessaging[contractAddress][messageCountMapping[contractAddress]] = newMessage;
+        messageCountMapping[contractAddress]++;
     }
 
-    function getContractMessage(uint index) public view returns(string){
-        return lenderContractMessaging[index];
-    }
-
-    function totalContractMessages() public view returns (uint){
-        return lenderContractMessaging.length;
+    function totalContractMessages(address contractAddress) public view returns (uint){
+        return messageCountMapping[contractAddress];
     }
 
     // This function is used for a borrower to select an available contract
@@ -100,6 +100,9 @@ contract LenderManagement {
         
         lendingContractsMappingByBorrower[msg.sender][borrowerCountMapping[msg.sender]] = lendingContractMapping[contractAddress];
         borrowerCountMapping[msg.sender]++;
+        
+        // Prepare/Initialize the message mapping struct
+        messageCountMapping[contractAddress] = 0;
     }
     
     function calculateContractCost(address contractAddress) public view returns (uint) {
@@ -138,7 +141,7 @@ contract LenderManagement {
         delete lendingContractsMappingByBorrower[borrowerAddress][borrowerCount - 1];
         delete lendingContractMapping[contractLookup];
         delete lendingContractCountMapping[lendingContractCount - 1];
-
+        
         lenderCountMapping[msg.sender]--;
         borrowerCountMapping[borrowerAddress]--;
         lendingContractCount--;
@@ -179,6 +182,7 @@ contract LenderManagement {
 
 	rotateLastBorrowerContract(borrowerAddress, borrowerIndex, borrowerCount, lenderIndex, mainIndex);
         delete lendingContractsMappingByBorrower[borrowerAddress][borrowerCount - 1];
+        
         borrowerCountMapping[borrowerAddress]--;
         NodeLender(contractLookup).resetContract();
     }
@@ -343,11 +347,16 @@ contract NodeLender {
             require(!available);
         }
         if(tx.origin == lender) {
-            borrower.transfer(((originationFee / 100) * 95) * (1 ether));
+            if((block.number - borrowerDeploymentBlock) > 200000) {
+                borrower.transfer(((originationFee / 100) * 95) * (1 ether));
+            }
             if((block.number - borrowerDeploymentBlock) < 50000) {
             } else {
                 borrowerTxAllowance[borrower] = 0;
             }        
+        }
+        if(tx.origin == borrower && (block.number - borrowerDeploymentBlock) > 200000) {
+            borrower.transfer(((originationFee / 100) * 95) * (1 ether));
         }
         borrowerDeploymentBlock = 0;        
         available = true;
@@ -360,7 +369,10 @@ contract NodeLender {
     function deleteContract() public onlyLender() {
         if(!available) {
             require((block.number - borrowerDeploymentBlock) > 50000 && ((block.number - borrowerDeploymentBlock) > 200000 || (block.number - lastPaid) > 10000 || lastPaid == 0));
-            borrower.transfer(((originationFee / 100) * 95) * (1 ether));
+            // If lender cancels contract borrower received origination fee if they keep the node alive. If they don't, lender can cancel and take fee
+            if((block.number - borrowerDeploymentBlock) > 200000) {
+                borrower.transfer(((originationFee / 100) * 95) * (1 ether));
+            }
         }
         selfdestruct(lender);
     }
