@@ -1,8 +1,8 @@
 pragma solidity 0.4.23;
 contract LenderManagement {
     address public owner;
-    mapping (address => mapping(uint => lendingContract)) public lendingContractsMappingByLender;
-    mapping (address => mapping(uint => lendingContract)) public lendingContractsMappingByBorrower;
+    mapping(address => mapping(uint => lendingContract)) public lendingContractsMappingByLender;
+    mapping(address => mapping(uint => lendingContract)) public lendingContractsMappingByBorrower;
     mapping(address => uint) public lenderCountMapping;
     mapping(address => uint) public borrowerCountMapping;
     mapping(address => lendingContract) public lendingContractMapping;
@@ -73,7 +73,7 @@ contract LenderManagement {
     
     // This function is used for a borrower to select an available contract
     function borrowerContractSelection(address contractAddress) public payable {
-        assert(lendingContractMapping[contractAddress].available == true && NodeLender(contractAddress).setBorrower.value(msg.value)(msg.sender));
+        require(lendingContractMapping[contractAddress].available == true && NodeLender(contractAddress).setBorrower.value(msg.value)(msg.sender));
     
         address lenderAddress = lendingContractMapping[contractAddress].lenderAddress;
         uint lenderIndex = lendingContractMapping[contractAddress].lenderIndex;
@@ -108,8 +108,8 @@ contract LenderManagement {
     }
 
     function removeContract(uint index) public {
-	    address lenderAddress = lendingContractsMappingByLender[msg.sender][index].lenderAddress;
-	    assert(msg.sender == lenderAddress);
+	address lenderAddress = lendingContractsMappingByLender[msg.sender][index].lenderAddress;
+	require(msg.sender == lenderAddress);
 
         address borrowerAddress = lendingContractsMappingByLender[msg.sender][index].borrowerAddress;
         uint borrowerIndex = lendingContractsMappingByLender[msg.sender][index].borrowerIndex;
@@ -120,7 +120,7 @@ contract LenderManagement {
         uint lenderCount = lenderCountMapping[msg.sender];
         uint borrowerCount = borrowerCountMapping[borrowerAddress];
         
-	    // Rotate end mappings to current index
+	// Rotate end mappings to current index
         rotateLastLenderContract(msg.sender, lenderIndex, lenderCount, borrowerIndex, mainIndex);
         rotateLastBorrowerContract(borrowerAddress, borrowerIndex, borrowerCount, lenderIndex, mainIndex);
         rotateLastMainContract(mainIndex, lenderIndex, borrowerIndex);
@@ -139,38 +139,37 @@ contract LenderManagement {
     }
     
     function resetContract(uint index, string side) public {
-	    (keccak256(side) == keccak256("lender") || keccak256(side) == keccak256("borrower"));
+	require(keccak256(side) == keccak256("lender") || keccak256(side) == keccak256("borrower"));
         address borrowerAddress;
-	    address lenderAddress;
-	    uint lenderIndex;
-	    uint mainIndex;
-	    address contractLookup;
+	address lenderAddress;
+	uint lenderIndex;
+	uint mainIndex;
+	address contractLookup;
         if(keccak256(side) == keccak256("borrower")) {
-	        borrowerAddress = msg.sender;
-		    lenderAddress = lendingContractsMappingByBorrower[msg.sender][index].lenderAddress;
-		    lenderIndex = lendingContractsMappingByBorrower[msg.sender][index].lenderIndex;
-		    mainIndex = lendingContractsMappingByBorrower[msg.sender][index].index;
-		    contractLookup = lendingContractsMappingByBorrower[msg.sender][index].lendingContractAddress;
-		
-	    } else {
-		    borrowerAddress = lendingContractsMappingByLender[msg.sender][index].borrowerAddress;
-		    lenderAddress = msg.sender;
-		    lenderIndex = index;
-		    mainIndex = lendingContractsMappingByLender[msg.sender][index].index;
-		    contractLookup = lendingContractsMappingByLender[msg.sender][index].lendingContractAddress;
-	    }
+	    borrowerAddress = msg.sender;
+            lenderAddress = lendingContractsMappingByBorrower[msg.sender][index].lenderAddress;
+            lenderIndex = lendingContractsMappingByBorrower[msg.sender][index].lenderIndex;
+	    mainIndex = lendingContractsMappingByBorrower[msg.sender][index].index;
+            contractLookup = lendingContractsMappingByBorrower[msg.sender][index].lendingContractAddress;	
+	} else {
+	    borrowerAddress = lendingContractsMappingByLender[msg.sender][index].borrowerAddress;
+            lenderAddress = msg.sender;
+	    lenderIndex = index;
+            mainIndex = lendingContractsMappingByLender[msg.sender][index].index;
+            contractLookup = lendingContractsMappingByLender[msg.sender][index].lendingContractAddress;
+	}
 
-	    lendingContractsMappingByLender[lenderAddress][lenderIndex].available = true;
+	lendingContractsMappingByLender[lenderAddress][lenderIndex].available = true;
     	lendingContractsMappingByLender[lenderAddress][lenderIndex].borrowerAddress = address(0);
-	    lendingContractCountMapping[mainIndex].available = true;
-	    lendingContractCountMapping[mainIndex].borrowerAddress = address(0);
-	    lendingContractMapping[contractLookup].available = true;
-	    lendingContractMapping[contractLookup].borrowerAddress = address(0);
+	lendingContractCountMapping[mainIndex].available = true;
+	lendingContractCountMapping[mainIndex].borrowerAddress = address(0);
+	lendingContractMapping[contractLookup].available = true;
+	lendingContractMapping[contractLookup].borrowerAddress = address(0);
 
         uint borrowerIndex = lendingContractsMappingByLender[lenderAddress][lenderIndex].borrowerIndex;
         uint borrowerCount = borrowerCountMapping[borrowerAddress];
 
-	    rotateLastBorrowerContract(borrowerAddress, borrowerIndex, borrowerCount, lenderIndex, mainIndex);
+	rotateLastBorrowerContract(borrowerAddress, borrowerIndex, borrowerCount, lenderIndex, mainIndex);
         delete lendingContractsMappingByBorrower[borrowerAddress][borrowerCount - 1];
         borrowerCountMapping[borrowerAddress]--;
         NodeLender(contractLookup).resetContract();
@@ -246,10 +245,10 @@ contract LenderManagement {
              }
              address contractLookup = lendingContractCountMapping[indexTracker].lendingContractAddress;
              NodeLender(contractLookup).disperseRewards();
-        }
+         }
     }
     
-     modifier onlyOwner {
+    modifier onlyOwner {
         require(
             tx.origin == owner
         );
@@ -265,7 +264,9 @@ contract NodeLender {
 
     uint public paymentThreshold;
     uint public lenderSplit;
+
     mapping(address => uint) public borrowerTxAllowance;
+    
     bool public available;
     uint public originationFee;
     uint public lastPaid;
