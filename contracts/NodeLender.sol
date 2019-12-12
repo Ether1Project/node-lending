@@ -83,6 +83,8 @@ contract LenderManagement {
 
     // This function is used for a borrower to select an available contract
     function borrowerContractSelection(address contractAddress) public payable {
+    	address lenderAddress = lendingContractMapping[contractAddress].lenderAddress;
+	require(msg.sender != lenderAddress);
         require(lendingContractMapping[contractAddress].available == true && NodeLender(contractAddress).setBorrower.value(msg.value)(msg.sender));
     
         lendingContractMapping[contractAddress].available = false;
@@ -145,7 +147,8 @@ contract LenderManagement {
         uint lenderIndex = lendingContractMapping[contractAddress].lenderIndex;
         address lenderAddress = lendingContractMapping[contractAddress].lenderAddress;
         
-        lendingContractsMappingByLender[lenderAddress][lenderIndex] = lendingContractsMappingByLender[lenderAddress][lenderCountMapping[lenderAddress] - 1];
+	address memory lendingContractAddressCopy = lendingContractsMappingByLender[lenderAddress][lenderCountMapping[lenderAddress] - 1];
+        lendingContractsMappingByLender[lenderAddress][lenderIndex] = lendingContractAddressCopy;
         
     }
     
@@ -153,13 +156,15 @@ contract LenderManagement {
         uint borrowerIndex = lendingContractMapping[contractAddress].borrowerIndex;
         address borrowerAddress = lendingContractMapping[contractAddress].borrowerAddress;
         
-        lendingContractsMappingByBorrower[borrowerAddress][borrowerIndex] = lendingContractsMappingByBorrower[borrowerAddress][borrowerCountMapping[borrowerAddress] - 1];
+	address memory lendingContractAddressCopy = lendingContractsMappingByBorrower[borrowerAddress][borrowerCountMapping[borrowerAddress] - 1];
+        lendingContractsMappingByBorrower[borrowerAddress][borrowerIndex] = lendingContractAddressCopy;
     }
     
     function rotateLastMainContract(address contractAddress) internal {
         uint mainIndex = lendingContractMapping[contractAddress].index;
         
-        lendingContractCountMapping[mainIndex] = lendingContractCountMapping[lendingContractCount - 1];
+	address memory lendingContractAddressCopy = lendingContractCountMapping[lendingContractCount - 1];
+        lendingContractCountMapping[mainIndex] = lendingContractAddressCopy;
     }
     
     function rotateLastContractIndexes(address contractAddress) internal {
@@ -305,7 +310,7 @@ contract NodeLender {
     }
     
     function setBorrower(address newBorrower) payable public returns (bool) {
-        require(available && msg.sender == controller && msg.value == (originationFee * (1 ether)));
+        require(available && tx.origin != lender && msg.sender == controller && msg.value == (originationFee * (1 ether)));
         borrower = newBorrower;
         borrowerDeploymentBlock = block.number;
         available = false;
