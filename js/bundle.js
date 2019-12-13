@@ -46,6 +46,10 @@ async function refreshContractData(){
   const totalContractCount = await contract.methods.lendingContractCount().call()
   console.log("Total Contract Count: " + totalContractCount);
 
+  $('#available-data-table').children().not('#available-header1, #available-header2').remove();
+  $('#lender-data-table').children().not('#lender-header1, #lender-header2').remove();
+  $('#borrower-data-table').children().not('#borrower-header1, #borrower-header2').remove();
+
   callAvailableData(contract, await totalContractCount);
   callLenderData();
   callBorrowerData();
@@ -62,8 +66,9 @@ function getLoginData(privateKey) {
   updateAccountBalance(loginAddress);
 
   $("#add-contract-button").css('display', 'block');
-  callLenderData();
-  callBorrowerData();
+  refreshContractData();
+  //callLenderData();
+  //callBorrowerData();
 }
 
 async function updateAccountBalance(loginAddress) {
@@ -111,8 +116,16 @@ async function callAvailableData(contract, totalContractCount) {
       console.log("Text: " + contractText + " Availability: " + contractAvailability + "Address: " + contractAddress + " Node Type: " + contractNodeType + "Borrower Address: " + contractBorrowerAddress + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
       if(contractData.available == true) {
         console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
-        $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" style="font-size:10px;" onclick="window.selectContractSetup(\'' + contractAddress + '\');">Select</button></div></div>');
-        //$('#available-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
+        if(loggedInFlag && loginAddress.toString().toUpperCase() == contractLenderAddress.toString().toUpperCase()) {
+          console.log("Login Address (True): " + loginAddress);
+          console.log("Lender Address (True): " + contractLenderAddress);
+          $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
+          //$('#available-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
+        } else {
+          console.log("Login Address (False): " + loginAddress);
+          console.log("Lender Address (False): " + contractLenderAddress);
+          $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" style="font-size:10px;" onclick="window.selectContractSetup(\'' + contractAddress + '\');">Select</button></div></div>');
+        }
       } else {
         $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
       }
@@ -211,7 +224,7 @@ async function callLenderData() {
       var contractBorrowerAddress;
       if(lenderContractData.available == true) {
         contractBorrowerAddress = "No Borrower";
-        $('#lender-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.lenderContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;">' + contractBorrowerAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 50px;"></div><div class="cell" data-title="Reset Contract" style="padding-right: 50px;"><button type="button" class="btn btn-danger" style="font-size: 10px;" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button></div></div>');
+        $('#lender-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.lenderContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;">' + contractBorrowerAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 50px;"></div><div class="cell" data-title="Reset Contract" style="padding-right: 50px;"><button type="button" class="btn btn-danger" style="font-size: 10px;" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button></div><div class="cell" data-title="Reset Contract" style="padding-right: 50px;"></div></div>');
       } else {
         contractBorrowerAddress = lenderContractData.borrowerAddress;
         $('#lender-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.lenderContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;">' + contractBorrowerAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-warning" style="font-size: 10px;" onclick="window.resetContractSetup(\'' + contractAddress + '\');">Reset</button></div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-danger" style="font-size:10px;" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button></div><div class="cell" data-title="contract-signup"><button type="button" class="btn btn-success" style="font-size: 10px;" onclick="window.sendContractMessage(\'' + contractAddress + '\', \'Lender\');">Message</button></div></div>');
