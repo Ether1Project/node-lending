@@ -1,8 +1,8 @@
 (function(){function r(e,n,t){function o(i,f){if(!n[i]){if(!e[i]){var c="function"==typeof require&&require;if(!f&&c)return c(i,!0);if(u)return u(i,!0);var a=new Error("Cannot find module '"+i+"'");throw a.code="MODULE_NOT_FOUND",a}var p=n[i]={exports:{}};e[i][0].call(p.exports,function(r){var n=e[i][1][r];return o(n||r)},p,p.exports,r,e,n,t)}return n[i].exports}for(var u="function"==typeof require&&require,i=0;i<t.length;i++)o(t[i]);return o}return r})()({1:[function(require,module,exports){
 const Web3 = require('web3');
 const web3 = new Web3('https://rpc.ether1.org');
-const CONTRACT_ADDRESS = '0x171Fb4eBAEF2e23E3386176a05d54Be41Deb2181';
-const CONTRACT_ABI = JSON.parse('[{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"contractMessage","type":"string"},{"name":"messageSide","type":"string"}],"name":"addContractMessage","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"borrowerContractSelection","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"to","type":"address"},{"name":"value","type":"uint256"}],"name":"contractBorrowerTransfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"split","type":"uint256"},{"name":"nodeType","type":"string"},{"name":"fee","type":"uint256"},{"name":"contractText","type":"string"}],"name":"createLendingContract","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"index","type":"uint256"}],"name":"removeContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"index","type":"uint256"},{"name":"side","type":"string"}],"name":"resetContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"index","type":"uint256"}],"name":"rewardDispersals","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"setGnCollateralAmount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"setMnCollateralAmount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"setSnCollateralAmount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"borrowerCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"calculateContractCost","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"userAddress","type":"address"},{"name":"index","type":"uint256"},{"name":"side","type":"string"}],"name":"getContractAddress","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"getContractCollateralAmount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"getContractLastPaid","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"getContractLastReward","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"gnCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lenderContractMessaging","outputs":[{"name":"lendingContractAddress","type":"address"},{"name":"message","type":"string"},{"name":"blockHeight","type":"uint256"},{"name":"side","type":"string"},{"name":"timestamp","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"lenderCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lendingContractCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lendingContractCountMapping","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"originationFee","type":"uint256"},{"name":"available","type":"bool"},{"name":"lenderSplit","type":"uint256"},{"name":"text","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"lendingContractMapping","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"originationFee","type":"uint256"},{"name":"available","type":"bool"},{"name":"lenderSplit","type":"uint256"},{"name":"text","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lendingContractsMappingByBorrower","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"originationFee","type":"uint256"},{"name":"available","type":"bool"},{"name":"lenderSplit","type":"uint256"},{"name":"text","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lendingContractsMappingByLender","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"originationFee","type":"uint256"},{"name":"available","type":"bool"},{"name":"lenderSplit","type":"uint256"},{"name":"text","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"messageCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"minOriginationFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"mnCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"snCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"totalContractMessages","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]');
+const CONTRACT_ADDRESS = '0x9b3D2E34F489A7650EaF840a2A31D176476939a1';
+const CONTRACT_ABI = JSON.parse('[{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"contractMessage","type":"string"},{"name":"messageSide","type":"string"}],"name":"addContractMessage","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"borrowerContractSelection","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"to","type":"address"},{"name":"value","type":"uint256"}],"name":"contractBorrowerTransfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"split","type":"uint256"},{"name":"nodeType","type":"string"},{"name":"fee","type":"uint256"},{"name":"contractText","type":"string"}],"name":"createLendingContract","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"removeContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"resetContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"setGnCollateralAmount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"setMnCollateralAmount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"setSnCollateralAmount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"borrowerCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"getContractCollateralAmount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"getContractLastPaid","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"getContractLastReward","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"gnCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lenderContractMessaging","outputs":[{"name":"lendingContractAddress","type":"address"},{"name":"message","type":"string"},{"name":"blockHeight","type":"uint256"},{"name":"side","type":"string"},{"name":"timestamp","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"lenderCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lendingContractCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lendingContractCountMapping","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"lendingContractMapping","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"originationFee","type":"uint256"},{"name":"available","type":"bool"},{"name":"lenderSplit","type":"uint256"},{"name":"text","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lendingContractsMappingByBorrower","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lendingContractsMappingByLender","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"messageCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"minOriginationFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"mnCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"snCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"totalContractMessages","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]');
 var contract;
 var loginAddress;
 var loginPrivateKey;
@@ -77,38 +77,47 @@ async function updateAccountBalance(loginAddress) {
 }
 
 async function callAvailableData(contract, totalContractCount) {
+  window.mainContractDataArray = {};
   if(totalContractCount > 0) {
     $('#available-data-table').children().not('#available-header1, #available-header2').remove();
     var data = false;
     var totalLending = 0;
     var totalAvailable = 0;
     for (var i = 0; i < totalContractCount; i++) {
-      const contractData = await contract.methods.lendingContractCountMapping(i).call({})
+      try{
+      const contractDataAddress = await contract.methods.lendingContractCountMapping(i).call({})
+      const contractData = await contract.methods.lendingContractMapping(contractDataAddress).call({})
+      console.log(contractData);
+
+      window.mainContractDataArray[i] = contractData;
       contractDataArray.push(contractData); //Save contract data for sorting
       const contractCollateralAmount = await contract.methods.getContractCollateralAmount(contractData.lendingContractAddress).call({})
       totalLending += Number(contractCollateralAmount);
-        data = true;
-        const contractAddress = contractData.lendingContractAddress;
-        const contractNodeType = getNodeTypeString(contractData.nodeType);
-        const contractLenderAddress = contractData.lenderAddress;
-        const contractBorrowerAddress = contractData.borrowerAddress;
-        const contractLenderSplit = contractData.lenderSplit;
-        const contractLenderFee = contractData.originationFee;
-        const contractText = contractData.text;
-        var contractAvailability;
-        if(contractData.available == true) {
-          totalAvailable += Number(contractCollateralAmount);
-          contractAvailability = "Yes"
-        } else {
-          contractAvailability = "No"
-        }
+      data = true;
+      const contractAddress = contractData.lendingContractAddress;
+      const contractNodeType = getNodeTypeString(contractData.nodeType);
+      const contractLenderAddress = contractData.lenderAddress;
+      const contractBorrowerAddress = contractData.borrowerAddress;
+      const contractLenderSplit = contractData.lenderSplit;
+      const contractLenderFee = contractData.originationFee;
+      const contractText = contractData.text;
+      var contractAvailability;
+      if(contractData.available == true) {
+        totalAvailable += Number(contractCollateralAmount);
+        contractAvailability = "Yes"
+      } else {
+        contractAvailability = "No"
+      }
       console.log("Text: " + contractText + " Availability: " + contractAvailability + "Address: " + contractAddress + " Node Type: " + contractNodeType + "Borrower Address: " + contractBorrowerAddress + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
       if(contractData.available == true) {
         console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
-        $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(contractData);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" style="font-size:10px;" onclick="window.selectContractSetup(\'' + contractAddress + '\');">Select</button></div></div>');
+        $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" style="font-size:10px;" onclick="window.selectContractSetup(\'' + contractAddress + '\');">Select</button></div></div>');
         //$('#available-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
       } else {
-        $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(contractData);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
+        $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
+      }
+      }catch(e){
+        console.log("error: ", e);
       }
     }
     var totalLendingString = (totalLending / 1000000000000000000).toFixed(2);
@@ -171,12 +180,15 @@ function sortContractData(sortItem) {
 
 async function callLenderData() {
   const lenderContractCount = await contract.methods.lenderCountMapping(loginAddress).call()
+  window.lenderContractDataArray = {};
   console.log("Lender Contract Count: " + lenderContractCount);
 
   if(lenderContractCount > 0) {
     $('#lender-data-table').children().not('#lender-header1, #lender-header2').remove();
     for (var i = 0; i < lenderContractCount; i++) {
-      const lenderContractData = await contract.methods.lendingContractsMappingByLender(loginAddress, i).call({})
+      const lenderContractDataAddress = await contract.methods.lendingContractsMappingByLender(loginAddress, i).call({})
+      const lenderContractData = await contract.methods.lendingContractMapping(lenderContractDataAddress).call({})
+      window.lenderContractDataArray[i] = lenderContractData;
       var contractAvailability;
       if(lenderContractData.available == true) {
         contractAvailability = "Yes"
@@ -199,10 +211,10 @@ async function callLenderData() {
       var contractBorrowerAddress;
       if(lenderContractData.available == true) {
         contractBorrowerAddress = "No Borrower";
-        $('#lender-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;">' + contractBorrowerAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 50px;"></div><div class="cell" data-title="Reset Contract" style="padding-right: 50px;"><button type="button" class="btn btn-danger" style="font-size: 10px;" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button></div></div>');
+        $('#lender-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.lenderContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;">' + contractBorrowerAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 50px;"></div><div class="cell" data-title="Reset Contract" style="padding-right: 50px;"><button type="button" class="btn btn-danger" style="font-size: 10px;" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button></div></div>');
       } else {
         contractBorrowerAddress = lenderContractData.borrowerAddress;
-        $('#lender-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;">' + contractBorrowerAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-warning" style="font-size: 10px; onclick="window.resetContractSetup(\'' + contractAddress + '\');">Reset</button></div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-danger" style="font-size:10px;" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button></div><div class="cell" data-title="contract-signup"><button type="button" class="btn btn-success" style="font-size: 10px;" onclick="window.sendContractMessage(\'' + contractAddress + '\', \'Lender\');">Message</button></div></div>');
+        $('#lender-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.lenderContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;">' + contractBorrowerAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-warning" style="font-size: 10px;" onclick="window.resetContractSetup(\'' + contractAddress + '\');">Reset</button></div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-danger" style="font-size:10px;" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button></div><div class="cell" data-title="contract-signup"><button type="button" class="btn btn-success" style="font-size: 10px;" onclick="window.sendContractMessage(\'' + contractAddress + '\', \'Lender\');">Message</button></div></div>');
       }
       console.log("Text: " + contractText + " Address: " + contractAddress + " Node Type: " + contractNodeType + " Borrower Address: " + contractBorrowerAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
     }
@@ -213,12 +225,15 @@ async function callLenderData() {
 }
 
 async function callBorrowerData() {
+  window.borrowerContractDataArray = {};
   const borrowerContractCount = await contract.methods.borrowerCountMapping(loginAddress).call()
   console.log("Borrower Contract Count: " + borrowerContractCount);
   if(borrowerContractCount > 0) {
     $('#borrower-data-table').children().not('#borrower-header1, #borrower-header2').remove();
     for (var i = 0; i < borrowerContractCount; i++) {
-      const borrowerContractData = await contract.methods.lendingContractsMappingByBorrower(loginAddress, i).call({});
+      const borrowerContractDataAddress = await contract.methods.lendingContractsMappingByBorrower(loginAddress, i).call({});
+      const borrowerContractData = await contract.methods.lendingContractMapping(borrowerContractDataAddress).call({});
+      window.borrowerContractDataArray[i] = borrowerContractData;
       const contractAddress = borrowerContractData.lendingContractAddress;
       const contractNodeType = getNodeTypeString(borrowerContractData.nodeType);
       const contractLenderAddress = borrowerContractData.lenderAddress;
@@ -233,7 +248,7 @@ async function callBorrowerData() {
         contractLastPaid = "Inactive";
       }
       console.log("Text: " + contractText + " Address: " + contractAddress + " Node Type: " + contractNodeType + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
-      $('#borrower-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '%</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Address" style="padding-right: 15px;">' + contractAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-warning" style="font-size:10px;" onclick="window.abandonContractSetup(\'' + contractAddress + '\');">Abandon</button></div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" style="font-size:10px;" onclick="window.verifyNodeSetup(\'' + contractAddress + '\');">Verify Node</button></div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" style="font-size:10px;" onclick="window.sendContractMessage(\'' + contractAddress + '\', \'Borrower\');">Message</button></div></div>');
+      $('#borrower-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.borrowerContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Address" style="padding-right: 15px;">' + contractAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 15px;"><button type="button" class="btn btn-warning" style="font-size:10px;" onclick="window.abandonContractSetup(\'' + contractAddress + '\');">Abandon</button></div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" style="font-size:10px;" onclick="window.verifyNodeSetup(\'' + contractAddress + '\');">Verify Node</button></div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" style="font-size:10px;" onclick="window.sendContractMessage(\'' + contractAddress + '\', \'Borrower\');">Message</button></div></div>');
     }
   } else {
     $('#borrower-data-table').children().not('#borrower-header1, #borrower-header2').remove();
@@ -243,7 +258,7 @@ async function callBorrowerData() {
 
 window.getContractDetails = function(contractData){
   $('#modalDetails').modal();
-  $('#node-type').text(contractData.nodeType);
+  $('#node-type').text(getNodeTypeString(contractData.nodeType));
   $('#contract-text').text(contractData.text);
 };
 
@@ -304,16 +319,22 @@ window.newLendingContractSetup = function(){
   $('#modalNewContractSetup').modal();
   var nodeType = document.getElementById("node-type-selection").value;
   var ethoCollateralAmount;
-  if(nodeType == "GN") { ethoCollateralAmount = 30000; }
-  else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
-  else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
+  //if(nodeType == "GN") { ethoCollateralAmount = 30000; }
+  //else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
+  //else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
+  if(nodeType == "GN") { ethoCollateralAmount = 1000; }
+  else if(nodeType == "MN") { ethoCollateralAmount = 500; }
+  else if(nodeType == "SN") { ethoCollateralAmount = 200; }
   $('#required-collateral').text(ethoCollateralAmount);
 
   $(document).on('change', '#node-type-selection', function() {
     nodeType = document.getElementById("node-type-selection").value;
-    if(nodeType == "GN") { ethoCollateralAmount = 30000; }
-    else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
-    else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
+    //if(nodeType == "GN") { ethoCollateralAmount = 30000; }
+    //else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
+    //else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
+    if(nodeType == "GN") { ethoCollateralAmount = 1000; }
+    else if(nodeType == "MN") { ethoCollateralAmount = 500; }
+    else if(nodeType == "SN") { ethoCollateralAmount = 200; }
     $('#required-collateral').text(ethoCollateralAmount);
   });
   $(document).on('click', '#submitNewContractButton', function() {
@@ -433,16 +454,15 @@ async function resetContract(contractAddress, side) {
   $('#confirmationModal').modal();
   $(document).on('click', '#generalConfirmButton', function() {
     $('#confirmationModal').modal('hide');
-      resetLendingContract(index, side);
+      resetLendingContract(contractAddress);
   });
 }
-async function resetLendingContract(index, side) {
-  console.log("Reset.... Index: " + index + " Side: " + side);
+async function resetLendingContract(contractAddress) {
   const tx = {
     to: CONTRACT_ADDRESS,
     from: web3.eth.defaultAccount,
     gas: 8000000,
-    data: contract.methods.resetContract(index, side).encodeABI()
+    data: contract.methods.resetContract(contractAddress).encodeABI()
   };
 
   web3.eth.accounts.signTransaction(tx, loginPrivateKey)
@@ -473,21 +493,21 @@ window.removeContractSetup = function(contractAddress){
 }
 
 async function removeContract(contractAddress) {
-  const contractData = await contract.methods.lendingContractMapping(contractAddress).call({})
-  const index = contractData.lenderIndex;
+  //const contractData = await contract.methods.lendingContractMapping(contractAddress).call({})
+  //const index = contractData.lenderIndex;
   $('#confirm-message').text("Remove");
   $('#confirmationModal').modal();
   $(document).on('click', '#generalConfirmButton', function() {
     $('#confirmationModal').modal('hide');
-      removeLendingContract(index);
+      removeLendingContract(contractAddress);
   });
 }
-async function removeLendingContract(index) {
+async function removeLendingContract(contractAddress) {
   const tx = {
     to: CONTRACT_ADDRESS,
     from: web3.eth.defaultAccount,
     gas: 8000000,
-    data: contract.methods.removeContract(index).encodeABI()
+    data: contract.methods.removeContract(contractAddress).encodeABI()
   };
 
   web3.eth.accounts.signTransaction(tx, loginPrivateKey)
@@ -591,12 +611,19 @@ function waitForReceipt(hash, cb) {
 
 function getCollateralAmount(nodeType) {
   var ethoValue;
-  if(nodeType == "GN") {
+  /*if(nodeType == "GN") {
     ethoValue = 30000;
   } else if(nodeType == "MN") {
     ethoValue = 15000;
   } else if(nodeType == "SN") {
     ethoValue = 5000;
+  }*/
+  if(nodeType == "GN") {
+    ethoValue = 1000;
+  } else if(nodeType == "MN") {
+    ethoValue = 500;
+  } else if(nodeType == "SN") {
+    ethoValue = 200;
   }
   var weiValue = web3.utils.toWei(ethoValue.toString(), 'ether')
   return web3.utils.toBN(weiValue);
