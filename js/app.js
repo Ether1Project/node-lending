@@ -64,7 +64,7 @@ function getLoginData(privateKey) {
   console.log("Login Private Key: " + loginPrivateKey + " Login Address: " + loginAddress);
   updateAccountBalance(loginAddress);
 
-  $("#add-contract-button").css('display', 'block');
+  $("#add-contract-button").css('display', 'inherit');
   refreshContractData();
   //callLenderData();
   //callBorrowerData();
