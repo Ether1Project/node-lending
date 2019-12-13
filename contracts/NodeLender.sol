@@ -44,9 +44,9 @@ contract LenderManagement {
     
     constructor() public {
         owner = msg.sender;
-        gnCollateralRequirement = 1000;
-        mnCollateralRequirement = 500;
-        snCollateralRequirement = 200;
+        gnCollateralRequirement = 30000;
+        mnCollateralRequirement = 15000;
+        snCollateralRequirement = 5000;
         minOriginationFee = 100;
     }
     
@@ -279,14 +279,12 @@ contract NodeLender {
     // Will not let lender reset if active and inside 200000 blocks from deployment
     function resetContract() public lenderOrBorrower() {
         if(tx.origin == lender) {
-            //require(!available && (block.number - borrowerDeploymentBlock) > 50000 && ((block.number - borrowerDeploymentBlock) > 200000 || (block.number - lastPaid) > 10000 || lastPaid == 0));
-            require(!available && (block.number - borrowerDeploymentBlock) > 50 && ((block.number - borrowerDeploymentBlock) > 200 || (block.number - lastPaid) > 10 || lastPaid == 0));
+            require(!available && (block.number - borrowerDeploymentBlock) > 50000 && ((block.number - borrowerDeploymentBlock) > 200000 || (block.number - lastPaid) > 10000 || lastPaid == 0));
         } else if (tx.origin == borrower) {
             require(!available);
         }
         if(tx.origin == lender) {
-            //if((block.number - borrowerDeploymentBlock) > 200000) {
-            if((block.number - borrowerDeploymentBlock) > 200) {
+            if((block.number - borrowerDeploymentBlock) > 200000) {
                 borrower.transfer(((originationFee / 100) * 95) * (1 ether));
             }
             //if((block.number - borrowerDeploymentBlock) < 50000) {
@@ -295,8 +293,7 @@ contract NodeLender {
                 borrowerTxAllowance[borrower] = 0;
             }        
         }
-        //if(tx.origin == borrower && (block.number - borrowerDeploymentBlock) > 200000) {
-        if(tx.origin == borrower && (block.number - borrowerDeploymentBlock) > 200) {
+        if(tx.origin == borrower && (block.number - borrowerDeploymentBlock) > 200000) {
             borrower.transfer(((originationFee / 100) * 95) * (1 ether));
         }
         borrowerDeploymentBlock = 0;        
@@ -309,11 +306,9 @@ contract NodeLender {
     // Lender can delete if contract is not yet selected
     function deleteContract() public onlyLender() {
         if(!available) {
-            //require((block.number - borrowerDeploymentBlock) > 50000 && ((block.number - borrowerDeploymentBlock) > 200000 || (block.number - lastPaid) > 10000 || lastPaid == 0));
-            require((block.number - borrowerDeploymentBlock) > 50 && ((block.number - borrowerDeploymentBlock) > 200 || (block.number - lastPaid) > 10 || lastPaid == 0));
+            require((block.number - borrowerDeploymentBlock) > 50000 && ((block.number - borrowerDeploymentBlock) > 200000 || (block.number - lastPaid) > 10000 || lastPaid == 0));
             // If lender cancels contract borrower received origination fee if they keep the node alive. If they don't, lender can cancel and take fee
-            //if((block.number - borrowerDeploymentBlock) > 200000) {
-            if((block.number - borrowerDeploymentBlock) > 200) {
+            if((block.number - borrowerDeploymentBlock) > 200000) {
                 borrower.transfer(((originationFee / 100) * 95) * (1 ether));
             }
         }
