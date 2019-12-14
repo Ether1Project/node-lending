@@ -8,6 +8,10 @@ var loginAddress;
 var loginPrivateKey;
 var loggedInFlag = false;
 var contractDataArray = [];
+window.mainContractDataArray = [];
+window.lenderContractDataArray = [];
+window.borrowerContractDataArray = [];
+
 
 $(document).on('click', '#help-button', function() {
   $('#helpModal').modal();
@@ -39,6 +43,11 @@ async function callContract(){
   $('#lender-data-table').append('<div class="row"><div class="cell" data-title="Node Type">No Lender Data Found</div></div>');
   $('#borrower-data-table').children().not('#borrower-header1, #borrower-header2').remove();
   $('#borrower-data-table').append('<div class="row"><div class="cell" data-title="Node Type">No Borrower Data Found</div></div>');
+}
+
+async function resetContract(){
+  contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+  return await contract;
 }
 
 async function refreshContractData(){
@@ -82,7 +91,8 @@ async function updateAccountBalance(loginAddress) {
 }
 
 async function callAvailableData(contract, totalContractCount) {
-  window.mainContractDataArray = {};
+  window.mainContractDataArray.length = 0;
+  contractDataArray.length = 0;
   if(totalContractCount > 0) {
     $('#available-data-table').children().not('#available-header1, #available-header2').remove();
     var data = false;
@@ -117,13 +127,8 @@ async function callAvailableData(contract, totalContractCount) {
       if(contractData.available == true) {
         console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
         if(loggedInFlag && loginAddress.toString().toUpperCase() == contractLenderAddress.toString().toUpperCase()) {
-          console.log("Login Address (True): " + loginAddress);
-          console.log("Lender Address (True): " + contractLenderAddress);
           $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
-          //$('#available-data-table').append('<div class="row"><div class="cell" data-title="Node Type">' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
         } else {
-          console.log("Login Address (False): " + loginAddress);
-          console.log("Lender Address (False): " + contractLenderAddress);
           $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" style="font-size:10px;" onclick="window.selectContractSetup(\'' + contractAddress + '\');">Select</button></div></div>');
         }
       } else {
@@ -193,7 +198,7 @@ function sortContractData(sortItem) {
 
 async function callLenderData() {
   const lenderContractCount = await contract.methods.lenderCountMapping(loginAddress).call()
-  window.lenderContractDataArray = {};
+  window.lenderContractDataArray.length = 0;
   console.log("Lender Contract Count: " + lenderContractCount);
 
   if(lenderContractCount > 0) {
@@ -224,7 +229,6 @@ async function callLenderData() {
       var contractBorrowerAddress;
       if(lenderContractData.available == true) {
         contractBorrowerAddress = "No Borrower";
-        //$('#lender-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.lenderContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;">' + contractBorrowerAddress + '</div><div class="cell" data-title="Reset Contract" style="padding-right: 50px;"></div><div class="cell" data-title="Reset Contract" style="padding-right: 50px;"><button type="button" class="btn btn-danger" style="font-size: 10px;" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button></div><div class="cell" data-title="Reset Contract" style="padding-right: 50px;"></div></div>');
         $('#lender-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.lenderContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;">' + contractBorrowerAddress + '</div><div class="dropdown"><button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 10px;">Options</button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="padding-left: 20%;"><button type="button" class="btn btn-danger" style="font-size:10px;width:80%;" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button><br></div>');
       } else {
         contractBorrowerAddress = lenderContractData.borrowerAddress;
@@ -239,7 +243,7 @@ async function callLenderData() {
 }
 
 async function callBorrowerData() {
-  window.borrowerContractDataArray = {};
+  window.borrowerContractDataArray.length = 0;
   const borrowerContractCount = await contract.methods.borrowerCountMapping(loginAddress).call()
   console.log("Borrower Contract Count: " + borrowerContractCount);
   if(borrowerContractCount > 0) {
@@ -290,9 +294,11 @@ async function getMessageData(contractAddress) {
 
 window.sendContractMessage = function(contractAddress, side){
   $('#modalMessage').modal();
+  document.getElementById("new-message").value = null;
   getMessageData(contractAddress);
-  $(document).on('click', '#sendMessageModalButton', function() {
+  $('#sendMessageModalButton').unbind('click').click(function(event) {
     var message = document.getElementById("new-message").value;
+    document.getElementById("new-message").value = null;
     sendMessage(contractAddress, message, side);
   });
 };
@@ -333,25 +339,19 @@ window.newLendingContractSetup = function(){
   $('#modalNewContractSetup').modal();
   var nodeType = document.getElementById("node-type-selection").value;
   var ethoCollateralAmount;
-  //if(nodeType == "GN") { ethoCollateralAmount = 30000; }
-  //else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
-  //else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
-  if(nodeType == "GN") { ethoCollateralAmount = 1000; }
-  else if(nodeType == "MN") { ethoCollateralAmount = 500; }
-  else if(nodeType == "SN") { ethoCollateralAmount = 200; }
+  if(nodeType == "GN") { ethoCollateralAmount = 30000; }
+  else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
+  else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
   $('#required-collateral').text(ethoCollateralAmount);
 
-  $(document).on('change', '#node-type-selection', function() {
+  $('#node-type-selection').unbind('change').click(function(event) {
     nodeType = document.getElementById("node-type-selection").value;
-    //if(nodeType == "GN") { ethoCollateralAmount = 30000; }
-    //else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
-    //else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
-    if(nodeType == "GN") { ethoCollateralAmount = 1000; }
-    else if(nodeType == "MN") { ethoCollateralAmount = 500; }
-    else if(nodeType == "SN") { ethoCollateralAmount = 200; }
+    if(nodeType == "GN") { ethoCollateralAmount = 30000; }
+    else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
+    else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
     $('#required-collateral').text(ethoCollateralAmount);
   });
-  $(document).on('click', '#submitNewContractButton', function() {
+  $('#submitNewContractButton').unbind('click').click(function(event) {
     $('#modalNewContractSetup').modal('hide');
     newLendingContract();
   });
@@ -406,7 +406,8 @@ async function selectContract(contractAddress) {
     const contractData = await contract.methods.lendingContractMapping(contractAddress).call({})
     $('#confirm-cost').text(contractData.originationFee);
     $('#costConfirmationModal').modal();
-    $(document).on('click', '#confirmButton', function() {
+
+    $('#confirmButton').unbind('click').click(function(event) {
       $('#costConfirmationModal').modal('hide');
       selectLendingContract(contractAddress, contractData.originationFee);
     });
@@ -466,7 +467,7 @@ async function resetContract(contractAddress, side) {
     $('#confirm-message').text("Reset");
   }
   $('#confirmationModal').modal();
-  $(document).on('click', '#generalConfirmButton', function() {
+  $('#generalConfirmButton').unbind('click').click(function(event) {
     $('#confirmationModal').modal('hide');
       resetLendingContract(contractAddress);
   });
@@ -507,11 +508,9 @@ window.removeContractSetup = function(contractAddress){
 }
 
 async function removeContract(contractAddress) {
-  //const contractData = await contract.methods.lendingContractMapping(contractAddress).call({})
-  //const index = contractData.lenderIndex;
   $('#confirm-message').text("Remove");
   $('#confirmationModal').modal();
-  $(document).on('click', '#generalConfirmButton', function() {
+  $('#generalConfirmButton').unbind('click').click(function(event) {
     $('#confirmationModal').modal('hide');
       removeLendingContract(contractAddress);
   });
@@ -555,7 +554,7 @@ async function verifyNode(contractAddress) {
   const contractData = await contract.methods.lendingContractMapping(contractAddress).call({})
   const index = contractData.lenderIndex;
   $('#verifyNodeModal').modal();
-  $(document).on('click', '#verifyNodeConfirmButton', function() {
+  $('#verifyNodeConfirmButton').unbind('click').click(function(event) {
     if(document.getElementById("verify-node-address") !== null) {
       var to = document.getElementById("verify-node-address").value;
       $('#verifyNodeModal').modal('hide');
@@ -625,19 +624,12 @@ function waitForReceipt(hash, cb) {
 
 function getCollateralAmount(nodeType) {
   var ethoValue;
-  /*if(nodeType == "GN") {
+  if(nodeType == "GN") {
     ethoValue = 30000;
   } else if(nodeType == "MN") {
     ethoValue = 15000;
   } else if(nodeType == "SN") {
     ethoValue = 5000;
-  }*/
-  if(nodeType == "GN") {
-    ethoValue = 1000;
-  } else if(nodeType == "MN") {
-    ethoValue = 500;
-  } else if(nodeType == "SN") {
-    ethoValue = 200;
   }
   var weiValue = web3.utils.toWei(ethoValue.toString(), 'ether')
   return web3.utils.toBN(weiValue);
