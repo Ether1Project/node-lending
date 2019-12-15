@@ -18,6 +18,27 @@ $(document).on('click', '#help-button', function() {
 $(document).on('click', '#terms-button', function() {
   $('#termsModal').modal();
 });
+$(document).on('click', '#filter-all-button', function() {
+  async function filter() {
+    const totalContractCount = await contract.methods.lendingContractCount().call()
+    callAvailableData(contract, await totalContractCount, "All");
+  }
+  filter();
+});
+$(document).on('click', '#filter-open-button', function() {
+  async function filter() {
+    const totalContractCount = await contract.methods.lendingContractCount().call()
+    callAvailableData(contract, await totalContractCount, "Open");
+  }
+  filter();
+});
+$(document).on('click', '#filter-closed-button', function() {
+  async function filter() {
+    const totalContractCount = await contract.methods.lendingContractCount().call()
+    callAvailableData(contract, await totalContractCount, "Closed");
+  }
+  filter();
+});
 
 window.initiateLogin = function(){
   $('#modalLogin').modal();
@@ -37,7 +58,7 @@ async function callContract(){
   const totalContractCount = await contract.methods.lendingContractCount().call()
   console.log("Total Contract Count: " + totalContractCount);
 
-  callAvailableData(await contract, await totalContractCount);
+  callAvailableData(await contract, await totalContractCount, "Open");
   $('#lender-data-table').children().not('#lender-header1, #lender-header2').remove();
   $('#lender-data-table').append('<div class="row"><div class="cell" data-title="Node Type">No Lender Data Found</div></div>');
   $('#borrower-data-table').children().not('#borrower-header1, #borrower-header2').remove();
@@ -58,7 +79,7 @@ async function refreshContractData(){
   $('#lender-data-table').children().not('#lender-header1, #lender-header2').remove();
   $('#borrower-data-table').children().not('#borrower-header1, #borrower-header2').remove();
 
-  callAvailableData(contract, await totalContractCount);
+  callAvailableData(contract, await totalContractCount, "Open");
   callLenderData();
   callBorrowerData();
 }
@@ -89,7 +110,7 @@ async function updateAccountBalance(loginAddress) {
   );
 }
 
-async function callAvailableData(contract, totalContractCount) {
+async function callAvailableData(contract, totalContractCount, filter) {
   window.mainContractDataArray.length = 0;
   contractDataArray.length = 0;
   if(totalContractCount > 0) {
@@ -122,16 +143,18 @@ async function callAvailableData(contract, totalContractCount) {
       } else {
         contractAvailability = "No"
       }
-      console.log("Text: " + contractText + " Availability: " + contractAvailability + "Address: " + contractAddress + " Node Type: " + contractNodeType + "Borrower Address: " + contractBorrowerAddress + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
-      if(contractData.available == true) {
-        console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
-        if(loggedInFlag && loginAddress.toString().toUpperCase() == contractLenderAddress.toString().toUpperCase()) {
-          $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
+      if(filter == "All" || (filter == "Open" && contractAvailability == "Yes") || (filter == "Closed" && contractAvailability == "No")) {
+        console.log("Text: " + contractText + " Availability: " + contractAvailability + "Address: " + contractAddress + " Node Type: " + contractNodeType + "Borrower Address: " + contractBorrowerAddress + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
+        if(contractData.available == true) {
+          console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
+          if(loggedInFlag && loginAddress.toString().toUpperCase() == contractLenderAddress.toString().toUpperCase()) {
+            $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
+          } else {
+            $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" style="font-size:10px;" onclick="window.selectContractSetup(\'' + contractAddress + '\');">Select</button></div></div>');
+          }
         } else {
-          $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" style="font-size:10px;" onclick="window.selectContractSetup(\'' + contractAddress + '\');">Select</button></div></div>');
+          $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
         }
-      } else {
-        $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;">' + contractLenderAddress + '</div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
       }
       }catch(e){
         console.log("error: ", e);
