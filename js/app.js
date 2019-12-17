@@ -39,7 +39,23 @@ $(document).on('click', '#filter-closed-button', function() {
   }
   filter();
 });
+function showDataLoadingProgress() {
+  var $bar = $('.bar');
+  $bar.width(0);
+  $('#loadingDataModal').modal();
+}
 
+function updateDataLoadingProgress(percent) {
+  var newWidth = Math.round(500 * percent);
+  var $bar = $('.bar');
+  if (newWidth==500) {
+    $bar.width(newWidth);
+    $('#loadingDataModal').modal('hide');
+  } else {
+    $bar.width(newWidth);
+  }
+  $bar.text(Math.round(newWidth/5) + "%");
+}
 window.initiateLogin = function(){
   $('#modalLogin').modal();
   $(document).on('click', '#loginModalButton', function() {
@@ -114,6 +130,7 @@ async function callAvailableData(contract, totalContractCount, filter) {
   window.mainContractDataArray.length = 0;
   contractDataArray.length = 0;
   if(totalContractCount > 0) {
+    showDataLoadingProgress();
     $('#available-data-table').children().not('#available-header1, #available-header2').remove();
     var data = false;
     var totalLending = 0;
@@ -159,6 +176,7 @@ async function callAvailableData(contract, totalContractCount, filter) {
       }catch(e){
         console.log("error: ", e);
       }
+      updateDataLoadingProgress(i / totalContractCount);
     }
     var totalLendingString = (totalLending / 1000000000000000000).toFixed(2);
     var totalAvailableString = (totalAvailable / 1000000000000000000).toFixed(2);
@@ -166,6 +184,7 @@ async function callAvailableData(contract, totalContractCount, filter) {
     console.log("Total Collateral in Available Contracts: ", totalAvailableString);
     $('#total-lending').text("Total Collateral Lent: " + totalLendingString + " ETHO");
     $('#total-available').text("Total Collateral Available: " + totalAvailableString + " ETHO");
+    updateDataLoadingProgress(1);
   }
   if(!data) {
     $('#available-data-table').append('<div class="row"><div class="cell" data-title="Node Type">No Contract Data Found</div></div>');
