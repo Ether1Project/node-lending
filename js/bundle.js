@@ -81,14 +81,20 @@ async function resetContract(){
 
 async function refreshContractData(){
   if(loggedInFlag) {updateAccountBalance(loginAddress);}
-  const totalContractCount = await contract.methods.lendingContractCount().call()
-  console.log("Total Contract Count: " + totalContractCount);
 
-  $('#available-data-table').children().not('#available-header1, #available-header2').remove();
-  $('#lender-data-table').children().not('#lender-header1, #lender-header2').remove();
-  $('#borrower-data-table').children().not('#borrower-header1, #borrower-header2').remove();
-
-  callContractData(contract, await totalContractCount);
+  if(loggedInFlag == true && typeof window.mainContractDataArray != 'undefined' && window.mainContractDataArray instanceof Array) {
+    for (var i = 0; i <  window.mainContractDataArray.length; i++) {
+      if(loginAddress == window.mainContractDataArray[i].lenderAddress) {
+        window.lenderContractDataArray[loginAddress] = ( typeof window.lenderContractDataArray[loginAddress] != 'undefined' && window.lenderContractDataArray[loginAddress] instanceof Array ) ? window.lenderContractDataArray[loginAddress] : []
+        window.lenderContractDataArray[loginAddress].push(window.mainContractDataArray[i]);
+      } else if (loginAddress == window.mainContractDataArray[i].borrowerAddress) {
+        window.borrowerContractDataArray[loginAddress] = ( typeof window.borrowerContractDataArray[loginAddress] != 'undefined' && window.borrowerContractDataArray[loginAddress] instanceof Array ) ? window.borrowerContractDataArray[loginAddress] : []
+        window.borrowerContractDataArray[loginAddress].push(window.mainContractDataArray[i]);
+      }
+    }
+    callLenderData();
+    callBorrowerData();
+  }
 }
 
 function getLoginData(privateKey) {
@@ -120,6 +126,9 @@ async function callContractData(contract, totalContractCount) {
   window.mainContractDataArray.length = 0;
   window.lenderContractDataArray.length = 0;
   window.borrowerContractDataArray.length = 0;
+  window.mainContractDataArray = [];
+  window.lenderContractDataArray = [];
+  window.borrowerContractDataArray = [];
   if(totalContractCount > 0) {
     showDataLoadingProgress();
     $('#available-data-table').children().not('#available-header1, #available-header2').remove();
@@ -147,10 +156,6 @@ async function callContractData(contract, totalContractCount) {
         } else {
         }
         window.mainContractDataArray.push(contractData);
-        window.lenderContractDataArray[contractData.lenderAddress] = ( typeof window.lenderContractDataArray[contractData.lenderAddress] != 'undefined' && window.lenderContractDataArray[contractData.lenderAddress] instanceof Array ) ? window.lenderContractDataArray[contractData.lenderAddress] : []
-        window.lenderContractDataArray[contractData.lenderAddress].push(contractData);
-        window.borrowerContractDataArray[contractData.borrowerAddress] = ( typeof window.borrowerContractDataArray[contractData.borrowerAddress] != 'undefined' && window.borrowerContractDataArray[contractData.borrowerAddress] instanceof Array ) ? window.borrowerContractDataArray[contractData.borrowerAddress] : []
-        window.borrowerContractDataArray[contractData.borrowerAddress].push(contractData);
         totalLending += Number(contractCollateralAmount);
       }catch(e){
         console.log("error: ", e);
@@ -258,45 +263,33 @@ function sortContractData(sortItem) {
 }
 
 async function callLenderData() {
-  const lenderContractCount = await contract.methods.lenderCountMapping(loginAddress).call()
-  window.lenderContractDataArray.length = 0;
-  console.log("Lender Contract Count: " + lenderContractCount);
+  if(typeof window.lenderContractDataArray[loginAddress] != 'undefined' && window.lenderContractDataArray[loginAddress] instanceof Array) {
+    console.log("Lender Contract Count: " + window.lenderContractDataArray[loginAddress].length);
 
-  if(lenderContractCount > 0) {
     $('#lender-data-table').children().not('#lender-header1, #lender-header2').remove();
-    for (var i = 0; i < lenderContractCount; i++) {
-      const lenderContractDataAddress = await contract.methods.lendingContractsMappingByLender(loginAddress, i).call({})
-      const lenderContractData = await contract.methods.lendingContractMapping(lenderContractDataAddress).call({})
-      window.lenderContractDataArray[i] = lenderContractData;
+    for (var i = 0; i < window.lenderContractDataArray[loginAddress].length; i++) {
       var contractAvailability;
-      if(lenderContractData.available == true) {
+      if(window.lenderContractDataArray[loginAddress][i].available == true) {
         contractAvailability = "Yes"
       } else {
         contractAvailability = "No"
       }
-      const contractAddress = lenderContractData.lendingContractAddress;
-      const contractNodeType = getNodeTypeString(lenderContractData.nodeType);
-      const contractLenderSplit = lenderContractData.lenderSplit;
-      const contractCollateralAmount = await contract.methods.getContractCollateralAmount(contractAddress).call({})
-      const contractLenderFee = lenderContractData.originationFee;
-      const contractText = lenderContractData.text;
-      const lastPaid = await contract.methods.getContractLastPaid(contractAddress).call({});
-      const lastReward = await contract.methods.getContractLastReward(contractAddress).call({});
-      lenderContractData.lastReward = lastReward;
-      var contractLastPaid;
-      if(lastPaid > 0) {
-        contractLastPaid = lastPaid;
-      } else {
-        contractLastPaid = "Inactive";
-      }
-      lenderContractData.lastPaid = contractLastPaid;
+      const contractAddress = window.lenderContractDataArray[loginAddress][i].lendingContractAddress;
+      const contractNodeType = getNodeTypeString(window.lenderContractDataArray[loginAddress][i].nodeType);
+      const contractLenderSplit = window.lenderContractDataArray[loginAddress][i].lenderSplit;
+      const contractCollateralAmount = window.lenderContractDataArray[loginAddress][i].contractCollateralAmount;
+      const contractLenderFee = window.lenderContractDataArray[loginAddress][i].originationFee;
+      const contractText = window.lenderContractDataArray[loginAddress][i].text;
+      const lastPaid = window.lenderContractDataArray[loginAddress][i].lastPaid;
+      const lastReward = window.lenderContractDataArray[loginAddress][i].lastReward;
+      const contractLastPaid = window.lenderContractDataArray[loginAddress][i].lastPaid;;
       var contractBorrowerAddress;
-      if(lenderContractData.available == true) {
+      if(window.lenderContractDataArray[loginAddress][i].available == true) {
         contractBorrowerAddress = "No Borrower";
-        $('#lender-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.lenderContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;"><a href="https://explorer.ether1.org/address/' + contractBorrowerAddress + '" target="_blank">' + contractBorrowerAddress + '</a></div><div class="dropdown"><button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 10px;">Options</button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="padding-left: 20%;"><button type="button" class="btn btn-danger" style="font-size:10px;width:80%;" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button><br></div>');
+        $('#lender-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.lenderContractDataArray[\'' + loginAddress + '\'][' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;"><a href="https://explorer.ether1.org/address/' + contractBorrowerAddress + '" target="_blank">' + contractBorrowerAddress + '</a></div><div class="dropdown"><button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 10px;">Options</button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="padding-left: 20%;"><button type="button" class="btn btn-danger" style="font-size:10px;width:80%;" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button><br></div>');
       } else {
-        contractBorrowerAddress = lenderContractData.borrowerAddress;
-        $('#lender-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.lenderContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;"><a href="https://explorer.ether1.org/address/' + contractBorrowerAddress + '" target="_blank">' + contractBorrowerAddress + '</a></div><div class="dropdown"><button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 10px;">Options</button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="padding-left: 20%;"><button type="button" class="btn btn-warning" style="font-size: 10px; width:80%;" onclick="window.resetContractSetup(\'' + contractAddress + '\');">Reset</button><br><br><button type="button" class="btn btn-danger" style="font-size:10px;width:80%;" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button><br><br><button type="button" class="btn btn-success" style="font-size: 10px; width:80%;" onclick="window.sendContractMessage(\'' + contractAddress + '\', \'Lender\');">Message</button></div></div><br></div>');
+        contractBorrowerAddress = window.lenderContractDataArray[loginAddress][i].borrowerAddress;
+        $('#lender-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.lenderContractDataArray[\'' + loginAddress + '\'][' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;"><a href="https://explorer.ether1.org/address/' + contractBorrowerAddress + '" target="_blank">' + contractBorrowerAddress + '</a></div><div class="dropdown"><button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 10px;">Options</button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="padding-left: 20%;"><button type="button" class="btn btn-warning" style="font-size: 10px; width:80%;" onclick="window.resetContractSetup(\'' + contractAddress + '\');">Reset</button><br><br><button type="button" class="btn btn-danger" style="font-size:10px;width:80%;" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button><br><br><button type="button" class="btn btn-success" style="font-size: 10px; width:80%;" onclick="window.sendContractMessage(\'' + contractAddress + '\', \'Lender\');">Message</button></div></div><br></div>');
       }
       console.log("Text: " + contractText + " Address: " + contractAddress + " Node Type: " + contractNodeType + " Borrower Address: " + contractBorrowerAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
     }
@@ -307,33 +300,20 @@ async function callLenderData() {
 }
 
 async function callBorrowerData() {
-  window.borrowerContractDataArray.length = 0;
-  const borrowerContractCount = await contract.methods.borrowerCountMapping(loginAddress).call()
-  console.log("Borrower Contract Count: " + borrowerContractCount);
-  if(borrowerContractCount > 0) {
+  if(typeof window.borrowerContractDataArray[loginAddress] != 'undefined' && window.borrowerContractDataArray[loginAddress] instanceof Array) {
+    console.log("Borrower Contract Count: " + window.borrowerContractDataArray[loginAddress].length);
     $('#borrower-data-table').children().not('#borrower-header1, #borrower-header2').remove();
-    for (var i = 0; i < borrowerContractCount; i++) {
-      const borrowerContractDataAddress = await contract.methods.lendingContractsMappingByBorrower(loginAddress, i).call({});
-      const borrowerContractData = await contract.methods.lendingContractMapping(borrowerContractDataAddress).call({});
-      window.borrowerContractDataArray[i] = borrowerContractData;
-      const contractAddress = borrowerContractData.lendingContractAddress;
-      const contractNodeType = getNodeTypeString(borrowerContractData.nodeType);
-      const contractLenderAddress = borrowerContractData.lenderAddress;
-      const contractLenderSplit = borrowerContractData.lenderSplit;
-      const contractText = borrowerContractData.text;
-      const contractCollateralAmount = await contract.methods.getContractCollateralAmount(contractAddress).call({});
-      const lastPaid = await contract.methods.getContractLastPaid(contractAddress).call({});
-      const lastReward = await contract.methods.getContractLastReward(contractAddress).call({});
-      borrowerContractData.lastReward = lastReward;
-      var contractLastPaid;
-      if(lastPaid > 0) {
-        contractLastPaid = lastPaid;
-      } else {
-        contractLastPaid = "Inactive";
-      }
-      borrowerContractData.lastPaid = contractLastPaid;
+    for (var i = 0; i < window.borrowerContractDataArray[loginAddress].length; i++) {
+      const contractAddress = window.borrowerContractDataArray[loginAddress][i].lendingContractAddress;
+      const contractNodeType = getNodeTypeString(window.borrowerContractDataArray[loginAddress][i].nodeType);
+      const contractLenderAddress = window.borrowerContractDataArray[loginAddress][i].lenderAddress;
+      const contractLenderSplit = window.borrowerContractDataArray[loginAddress][i].lenderSplit;
+      const contractText = window.borrowerContractDataArray[loginAddress][i].text;
+      const contractCollateralAmount = window.borrowerContractDataArray[loginAddress][i].contractCollateralAmount;
+      const contractLastPaid = window.borrowerContractDataArray[loginAddress][i].lastPaid;
+      const lastReward = window.borrowerContractDataArray[loginAddress][i].lastReward;
       console.log("Text: " + contractText + " Address: " + contractAddress + " Node Type: " + contractNodeType + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
-      $('#borrower-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.borrowerContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Address" style="padding-right: 15px;"><a href="https://explorer.ether1.org/address/' + contractAddress + '" target="_blank">' + contractAddress + '</a></div><div class="dropdown"><button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 10px;">Options</button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="padding-left: 20%;"><button type="button" class="btn btn-warning" style="width: 80%; font-size:10px;" onclick="window.abandonContractSetup(\'' + contractAddress + '\');">Abandon</button><br><br><button type="button" class="btn btn-success" style="width: 80%; font-size:10px;" onclick="window.verifyNodeSetup(\'' + contractAddress + '\');">Verify Node</button><br><br><button type="button" class="btn btn-success" style="width: 80%; font-size:10px;" onclick="window.sendContractMessage(\'' + contractAddress + '\', \'Borrower\');">Message</button><br></div></div>');
+      $('#borrower-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.borrowerContractDataArray[\'' + loginAddress + '\'][' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Address" style="padding-right: 15px;"><a href="https://explorer.ether1.org/address/' + contractAddress + '" target="_blank">' + contractAddress + '</a></div><div class="dropdown"><button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 10px;">Options</button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="padding-left: 20%;"><button type="button" class="btn btn-warning" style="width: 80%; font-size:10px;" onclick="window.abandonContractSetup(\'' + contractAddress + '\');">Abandon</button><br><br><button type="button" class="btn btn-success" style="width: 80%; font-size:10px;" onclick="window.verifyNodeSetup(\'' + contractAddress + '\');">Verify Node</button><br><br><button type="button" class="btn btn-success" style="width: 80%; font-size:10px;" onclick="window.sendContractMessage(\'' + contractAddress + '\', \'Borrower\');">Message</button><br></div></div>');
     }
   } else {
     $('#borrower-data-table').children().not('#borrower-header1, #borrower-header2').remove();
