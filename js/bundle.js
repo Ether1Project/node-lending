@@ -346,7 +346,11 @@ window.getContractDetails = function(contractData){
   $('#contract-text').text(contractData.text);
   //$('#deploy-block').text(contractData.text);
   $('#node-status').text(nodeStatus);
-  $('#last-reward').text(contractData.lastReward);
+  var lastLenderReward = Number((Number(contractData.lastReward) / 1000000000000000000).toFixed(2) / 100 ) * Number(contractData.lenderSplit);
+  var lastBorrowerReward = Number((Number(contractData.lastReward) / 1000000000000000000).toFixed(2) / 100 ) * (100 - Number(contractData.lenderSplit));
+  console.log("Last Borrower Reward: " + lastBorrowerReward + "  Last Lender Reward: " + lastLenderReward);
+  $('#last-lender-reward').text(lastLenderReward);
+  $('#last-borrower-reward').text(lastBorrowerReward);
 };
 
 async function getMessageData(contractAddress) {
