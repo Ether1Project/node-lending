@@ -73,12 +73,14 @@ async function callContract(){
   $('#borrower-data-table').append('<div class="row"><div class="cell" data-title="Node Type">No Borrower Data Found</div></div>');
 }
 
-async function resetContract(){
+async function refreshContractData(){
   contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
-  return await contract;
+  currentBlockHeight = await web3.eth.getBlockNumber();
+  const totalContractCount = await contract.methods.lendingContractCount().call();
+  callContractData(await contract, await totalContractCount);
 }
 
-async function refreshContractData(){
+async function loadUserContractData(){
   if(loggedInFlag) {updateAccountBalance(loginAddress);}
 
   if(loggedInFlag == true && typeof window.mainContractDataArray != 'undefined' && window.mainContractDataArray instanceof Array) {
@@ -107,7 +109,7 @@ function getLoginData(privateKey) {
   updateAccountBalance(loginAddress);
 
   $("#add-contract-button").css('display', 'inherit');
-  refreshContractData();
+  loadUserContractData();
 }
 
 async function updateAccountBalance(loginAddress) {
@@ -171,8 +173,9 @@ async function callContractData(contract, totalContractCount) {
 
     callAvailableData("Open");
     if(loggedInFlag == true) {
-      callLenderData();
-      callBorrowerData();
+      //callLenderData();
+      //callBorrowerData();
+      loadUserContractData();
     }
   }
 }
@@ -338,11 +341,11 @@ window.getContractDetails = async function(contractData){
   }
   $('#node-status').text(nodeStatus);
   $('#blocks-since').text(blocksSinceDeployment);
-  var lastLenderReward = Number((Number(contractData.lastReward) / 1000000000000000000).toFixed(2) / 100 ) * Number(contractData.lenderSplit);
-  var lastBorrowerReward = Number((Number(contractData.lastReward) / 1000000000000000000).toFixed(2) / 100 ) * (100 - Number(contractData.lenderSplit));
+  var lastLenderReward = Number((Number(contractData.lastReward) / 1000000000000000000).toFixed(2) / 100 ) * Number(contractData.lenderSplit).toFixed(2);
+  var lastBorrowerReward = Number((Number(contractData.lastReward) / 1000000000000000000).toFixed(2) / 100 ) * (100 - Number(contractData.lenderSplit)).toFixed(2);
   console.log("Last Borrower Reward: " + lastBorrowerReward + "  Last Lender Reward: " + lastLenderReward);
-  $('#last-lender-reward').text(lastLenderReward);
-  $('#last-borrower-reward').text(lastBorrowerReward);
+  $('#last-lender-reward').text(lastLenderReward + " ETHO");
+  $('#last-borrower-reward').text(lastBorrowerReward + " ETHO");
 };
 
 async function getMessageData(contractAddress) {
