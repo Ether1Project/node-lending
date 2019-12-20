@@ -22,25 +22,13 @@ $(document).on('click', '#terms-button', function() {
   $('#termsModal').modal();
 });
 $(document).on('click', '#filter-all-button', function() {
-  async function filter() {
-    const totalContractCount = await contract.methods.lendingContractCount().call()
-    callAvailableData(contract, await totalContractCount, "All");
-  }
-  filter();
+  callAvailableData("All");
 });
 $(document).on('click', '#filter-open-button', function() {
-  async function filter() {
-    const totalContractCount = await contract.methods.lendingContractCount().call()
-    callAvailableData(contract, await totalContractCount, "Open");
-  }
-  filter();
+  callAvailableData("Open");
 });
 $(document).on('click', '#filter-closed-button', function() {
-  async function filter() {
-    const totalContractCount = await contract.methods.lendingContractCount().call()
-    callAvailableData(contract, await totalContractCount, "Closed");
-  }
-  filter();
+  callAvailableData("Closed");
 });
 function showDataLoadingProgress() {
   var $bar = $('.bar');
@@ -79,7 +67,7 @@ async function callContract(){
   console.log("Total Contract Count: " + totalContractCount);
   console.log("Current Block Height: " + currentBlockHeight);
 
-  callAvailableData(await contract, await totalContractCount, "Open");
+  callContractData(await contract, await totalContractCount);
   $('#lender-data-table').children().not('#lender-header1, #lender-header2').remove();
   $('#lender-data-table').append('<div class="row"><div class="cell" data-title="Node Type">No Lender Data Found</div></div>');
   $('#borrower-data-table').children().not('#borrower-header1, #borrower-header2').remove();
@@ -100,9 +88,7 @@ async function refreshContractData(){
   $('#lender-data-table').children().not('#lender-header1, #lender-header2').remove();
   $('#borrower-data-table').children().not('#borrower-header1, #borrower-header2').remove();
 
-  callAvailableData(contract, await totalContractCount, "Open");
-  callLenderData();
-  callBorrowerData();
+  callContractData(contract, await totalContractCount);
 }
 
 function getLoginData(privateKey) {
@@ -117,8 +103,6 @@ function getLoginData(privateKey) {
 
   $("#add-contract-button").css('display', 'inherit');
   refreshContractData();
-  //callLenderData();
-  //callBorrowerData();
 }
 
 async function updateAccountBalance(loginAddress) {
@@ -131,9 +115,11 @@ async function updateAccountBalance(loginAddress) {
   );
 }
 
-async function callAvailableData(contract, totalContractCount, filter) {
+async function callContractData(contract, totalContractCount) {
+  totalLending = 0;
   window.mainContractDataArray.length = 0;
-  contractDataArray.length = 0;
+  window.lenderContractDataArray.length = 0;
+  window.borrowerContractDataArray.length = 0;
   if(totalContractCount > 0) {
     showDataLoadingProgress();
     $('#available-data-table').children().not('#available-header1, #available-header2').remove();
@@ -142,65 +128,83 @@ async function callAvailableData(contract, totalContractCount, filter) {
     var totalAvailable = 0;
     for (var i = 0; i < totalContractCount; i++) {
       try{
-      const contractDataAddress = await contract.methods.lendingContractCountMapping(i).call({})
-      const contractData = await contract.methods.lendingContractMapping(contractDataAddress).call({})
-      console.log(contractData);
-
-      window.mainContractDataArray[i] = contractData;
-      contractDataArray.push(contractData); //Save contract data for sorting
-      const contractCollateralAmount = await contract.methods.getContractCollateralAmount(contractData.lendingContractAddress).call({})
-      totalLending += Number(contractCollateralAmount);
-      data = true;
-      const contractAddress = contractData.lendingContractAddress;
-      const contractNodeType = getNodeTypeString(contractData.nodeType);
-      const contractLenderAddress = contractData.lenderAddress;
-      const contractBorrowerAddress = contractData.borrowerAddress;
-      const contractLenderSplit = contractData.lenderSplit;
-      const contractLenderFee = contractData.originationFee;
-      const contractText = contractData.text;
-      var contractAvailability;
-      if(contractData.available == true) {
-        totalAvailable += Number(contractCollateralAmount);
-        contractAvailability = "Yes"
-      } else {
-        contractAvailability = "No"
-      }
-      const lastPaid = await contract.methods.getContractLastPaid(contractAddress).call({});
-      const lastReward = await contract.methods.getContractLastReward(contractAddress).call({});
-      contractData.lastReward = lastReward;
-      var contractLastPaid;
-      if(lastPaid > 0) {
-        contractLastPaid = lastPaid;
-      } else {
-        contractLastPaid = "Inactive";
-      }
-      contractData.lastPaid = contractLastPaid;
-
-      if(filter == "All" || (filter == "Open" && contractAvailability == "Yes") || (filter == "Closed" && contractAvailability == "No")) {
-        console.log("Text: " + contractText + " Availability: " + contractAvailability + "Address: " + contractAddress + " Node Type: " + contractNodeType + "Borrower Address: " + contractBorrowerAddress + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
-        if(contractData.available == true) {
-          console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
-          if(loggedInFlag && loginAddress.toString().toUpperCase() == contractLenderAddress.toString().toUpperCase()) {
-            $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;"><a href="https://explorer.ether1.org/address/' + contractLenderAddress + '" target="_blank">' + contractLenderAddress + '</a></div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
-          } else {
-            $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;"><a href="https://explorer.ether1.org/address/' + contractLenderAddress + '" target="_blank">' + contractLenderAddress+ '</a></div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" style="font-size:10px;" onclick="window.selectContractSetup(\'' + contractAddress + '\');">Select</button></div></div>');
-          }
+        const contractDataAddress = await contract.methods.lendingContractCountMapping(i).call({})
+        const contractData = await contract.methods.lendingContractMapping(contractDataAddress).call({})
+        const contractCollateralAmount = await contract.methods.getContractCollateralAmount(contractData.lendingContractAddress).call({})
+        contractData.contractCollateralAmount = contractCollateralAmount;
+        const lastPaid = await contract.methods.getContractLastPaid(contractData.lendingContractAddress).call({});
+        const lastReward = await contract.methods.getContractLastReward(contractData.lendingContractAddress).call({});
+        contractData.lastReward = lastReward;
+        var contractLastPaid;
+        if(lastPaid > 0) {
+          contractLastPaid = lastPaid;
         } else {
-          $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;"><a href="https://explorer.ether1.org/address/' + contractLenderAddress + '" target="_blank">' + contractLenderAddress + '</a></div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
+          contractLastPaid = "Inactive";
         }
-      }
+        contractData.lastPaid = contractLastPaid;
+        if(contractData.available == true) {
+          totalAvailable += Number(contractCollateralAmount);
+        } else {
+        }
+        window.mainContractDataArray.push(contractData);
+        window.lenderContractDataArray[contractData.lenderAddress] = ( typeof window.lenderContractDataArray[contractData.lenderAddress] != 'undefined' && window.lenderContractDataArray[contractData.lenderAddress] instanceof Array ) ? window.lenderContractDataArray[contractData.lenderAddress] : []
+        window.lenderContractDataArray[contractData.lenderAddress].push(contractData);
+        window.borrowerContractDataArray[contractData.borrowerAddress] = ( typeof window.borrowerContractDataArray[contractData.borrowerAddress] != 'undefined' && window.borrowerContractDataArray[contractData.borrowerAddress] instanceof Array ) ? window.borrowerContractDataArray[contractData.borrowerAddress] : []
+        window.borrowerContractDataArray[contractData.borrowerAddress].push(contractData);
+        totalLending += Number(contractCollateralAmount);
       }catch(e){
         console.log("error: ", e);
       }
       updateDataLoadingProgress(i / totalContractCount);
     }
+    updateDataLoadingProgress(1);
     var totalLendingString = (totalLending / 1000000000000000000).toFixed(2);
     var totalAvailableString = (totalAvailable / 1000000000000000000).toFixed(2);
     console.log("Total Collateral in Lending System: ", totalLendingString);
     console.log("Total Collateral in Available Contracts: ", totalAvailableString);
     $('#total-lending').text("Total Collateral Lent: " + totalLendingString + " ETHO");
     $('#total-available').text("Total Collateral Available: " + totalAvailableString + " ETHO");
-    updateDataLoadingProgress(1);
+
+    callAvailableData("Open");
+    if(loggedInFlag == true) {
+      callLenderData();
+      callBorrowerData();
+    }
+  }
+}
+
+async function callAvailableData(filter) {
+  var data = false;
+  $('#available-data-table').children().not('#available-header1, #available-header2').remove();
+  for (var i = 0; i <  window.mainContractDataArray.length; i++) {
+    data = true;
+    const contractAddress = window.mainContractDataArray[i].lendingContractAddress;
+    const contractNodeType = getNodeTypeString(mainContractDataArray[i].nodeType);
+    const contractLenderAddress = window.mainContractDataArray[i].lenderAddress;
+    const contractBorrowerAddress = window.mainContractDataArray[i].borrowerAddress;
+    const contractLenderSplit = window.mainContractDataArray[i].lenderSplit;
+    const contractLenderFee = window.mainContractDataArray[i].originationFee;
+    const contractText = window.mainContractDataArray[i].text;
+    var contractAvailability;
+    if(window.mainContractDataArray[i].available == true) {
+      contractAvailability = "Yes"
+    } else {
+      contractAvailability = "No"
+    }
+
+    if(filter == "All" || (filter == "Open" && contractAvailability == "Yes") || (filter == "Closed" && contractAvailability == "No")) {
+      console.log("Text: " + contractText + " Availability: " + contractAvailability + "Address: " + contractAddress + " Node Type: " + contractNodeType + "Borrower Address: " + contractBorrowerAddress + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + window.mainContractDataArray[i].contractCollateralAmount);
+      if(window.mainContractDataArray[i].available == true) {
+        console.log("Address: " + contractAddress + " Node Type: " + contractNodeType + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + window.mainContractDataArray[i].contractCollateralAmount);
+        if(loggedInFlag && loginAddress.toString().toUpperCase() == contractLenderAddress.toString().toUpperCase()) {
+          $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;"><a href="https://explorer.ether1.org/address/' + contractLenderAddress + '" target="_blank">' + contractLenderAddress + '</a></div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
+        } else {
+          $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;"><a href="https://explorer.ether1.org/address/' + contractLenderAddress + '" target="_blank">' + contractLenderAddress+ '</a></div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"><button type="button" class="btn btn-success" style="font-size:10px;" onclick="window.selectContractSetup(\'' + contractAddress + '\');">Select</button></div></div>');
+        }
+      } else {
+        $('#available-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.mainContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Lender Fee">' + contractLenderFee + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Lender Address" style="padding-right: 15px;"><a href="https://explorer.ether1.org/address/' + contractLenderAddress + '" target="_blank">' + contractLenderAddress + '</a></div><div class="cell" data-title="contract-signup" style="padding-right: 15px;"></div></div>');
+      }
+    }
   }
   if(!data) {
     $('#available-data-table').append('<div class="row"><div class="cell" data-title="Node Type">No Contract Data Found</div></div>');
