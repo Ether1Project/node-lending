@@ -439,19 +439,31 @@
 								<br>
 								<h4 class="modal-title" style="font-size: 20px;">Become an &nbsp<span id="etho-message" style="color: #9c2877; font-weight: bold;">ETHO</span>&nbsp Lender</h4>
 								<ol>
-									<li><b>1.</b> Login with your private key</li>
-									<li><b>2.</b> Click “Add Contract”</li>
-									<li><b>3.</b> Select desired fees and submit</li>
+									<li><b>1.)</b> Login with your private key</li>
+									<li><b>2.)</b> Click “Add Contract”</li>
+									<li><b>3.)</b> Select desired fees and submit</li>
 								</ol>
+								<h5 class="modal-title" style="font-size: 18px;">Lender Contracts Buttons</h5>
+								<ul>
+									<li><b>• Reset</b> - put contract back on market and keep or return origination fee based on terms</li>
+									<li><b>• Remove</b> - delete contract from market and keep or return origination fee based on terms</li>
+									<li><b>• Message</b> - send message to borrower</li>
+									<li><i>(note: forfeited borrower fees do not get paid out until the contract is removed)</i></li>
 								<hr>
 								<h4 class="modal-title" style="font-size: 20px;">Become an &nbsp<span id="etho-message" style="color: #9c2877; font-weight: bold;">ETHO</span>&nbsp Borrower</h4>
 								<ol>
-									<li><b>1.</b> Login with your private key</li>
-									<li><b>2.</b> Select desired available contract</li>
-									<li><b>3.</b> Confirm fee payment and submit to reserve contract</li>
-									<li><b>4.</b> Setup your node at <a href="https://nodes.ether1.org/">https://nodes.ether1.org</a></li>
-									<li><b>5.</b> Use your staking dashboard to send node verification tx (click “Send TX” button) and enter verification address from node dashboard registration. Use resulting tx hash for verification</li>
+									<li><b>1.)</b> Login with your private key</li>
+									<li><b>2.)</b> Select desired available contract</li>
+									<li><b>3.)</b> Confirm fee payment and submit to reserve contract</li>
+									<li><b>4.)</b> Setup your node at <a href="https://nodes.ether1.org/">https://nodes.ether1.org</a></li>
+									<li><b>5.)</b> Use your staking dashboard to send node verification tx (click “Send TX” button) and enter verification address from node dashboard registration. Use resulting tx hash for verification</li>
 								</ol>
+								<h5 class="modal-title" style="font-size: 18px;">Borrower Contracts Buttons</h5>
+								<ul>
+									<li><b>• Abandon</b> - withdraw offer to host node and keep or return origination fee based on terms</li>
+									<li><b>• Verify Node</b> - use for node dashboard verification transaction & resultant hash</li>
+									<li><b>• Message</b> - send message to lender</li>
+								</ul>
 							</div>
 						</tbody>
 					</table>
@@ -655,7 +667,6 @@
      	  <div class="modal-body center-block">
         <div class="progress">
         <div class="progress-bar bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-            
         </div>
         </div>
       	</div>
