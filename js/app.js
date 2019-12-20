@@ -7,6 +7,7 @@ var loginAddress;
 var loginPrivateKey;
 var loggedInFlag = false;
 var contractDataArray = [];
+var currentBlockHeight;
 window.mainContractDataArray = [];
 window.lenderContractDataArray = [];
 window.borrowerContractDataArray = [];
@@ -71,8 +72,10 @@ window.initiateLogin = function(){
 
 async function callContract(){
   contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+  currentBlockHeight = await web3.eth.getBlockNumber();
   const totalContractCount = await contract.methods.lendingContractCount().call()
   console.log("Total Contract Count: " + totalContractCount);
+  console.log("Current Block Height: " + currentBlockHeight);
 
   callAvailableData(await contract, await totalContractCount, "Open");
   $('#lender-data-table').children().not('#lender-header1, #lender-header2').remove();
@@ -160,6 +163,17 @@ async function callAvailableData(contract, totalContractCount, filter) {
       } else {
         contractAvailability = "No"
       }
+      const lastPaid = await contract.methods.getContractLastPaid(contractAddress).call({});
+      const lastReward = await contract.methods.getContractLastReward(contractAddress).call({});
+      contractData.lastReward = lastReward;
+      var contractLastPaid;
+      if(lastPaid > 0) {
+        contractLastPaid = lastPaid;
+      } else {
+        contractLastPaid = "Inactive";
+      }
+      contractData.lastPaid = contractLastPaid;
+
       if(filter == "All" || (filter == "Open" && contractAvailability == "Yes") || (filter == "Closed" && contractAvailability == "No")) {
         console.log("Text: " + contractText + " Availability: " + contractAvailability + "Address: " + contractAddress + " Node Type: " + contractNodeType + "Borrower Address: " + contractBorrowerAddress + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
         if(contractData.available == true) {
@@ -261,12 +275,15 @@ async function callLenderData() {
       const contractLenderFee = lenderContractData.originationFee;
       const contractText = lenderContractData.text;
       const lastPaid = await contract.methods.getContractLastPaid(contractAddress).call({});
+      const lastReward = await contract.methods.getContractLastReward(contractAddress).call({});
+      lenderContractData.lastReward = lastReward;
       var contractLastPaid;
       if(lastPaid > 0) {
         contractLastPaid = lastPaid;
       } else {
         contractLastPaid = "Inactive";
       }
+      lenderContractData.lastPaid = contractLastPaid;
       var contractBorrowerAddress;
       if(lenderContractData.available == true) {
         contractBorrowerAddress = "No Borrower";
@@ -300,12 +317,15 @@ async function callBorrowerData() {
       const contractText = borrowerContractData.text;
       const contractCollateralAmount = await contract.methods.getContractCollateralAmount(contractAddress).call({});
       const lastPaid = await contract.methods.getContractLastPaid(contractAddress).call({});
+      const lastReward = await contract.methods.getContractLastReward(contractAddress).call({});
+      borrowerContractData.lastReward = lastReward;
       var contractLastPaid;
       if(lastPaid > 0) {
         contractLastPaid = lastPaid;
       } else {
         contractLastPaid = "Inactive";
       }
+      borrowerContractData.lastPaid = contractLastPaid;
       console.log("Text: " + contractText + " Address: " + contractAddress + " Node Type: " + contractNodeType + " Lender Address: " + contractLenderAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
       $('#borrower-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.borrowerContractDataArray[' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Address" style="padding-right: 15px;"><a href="https://explorer.ether1.org/address/' + contractAddress + '" target="_blank">' + contractAddress + '</a></div><div class="dropdown"><button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 10px;">Options</button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="padding-left: 20%;"><button type="button" class="btn btn-warning" style="width: 80%; font-size:10px;" onclick="window.abandonContractSetup(\'' + contractAddress + '\');">Abandon</button><br><br><button type="button" class="btn btn-success" style="width: 80%; font-size:10px;" onclick="window.verifyNodeSetup(\'' + contractAddress + '\');">Verify Node</button><br><br><button type="button" class="btn btn-success" style="width: 80%; font-size:10px;" onclick="window.sendContractMessage(\'' + contractAddress + '\', \'Borrower\');">Message</button><br></div></div>');
     }
@@ -316,9 +336,16 @@ async function callBorrowerData() {
 }
 
 window.getContractDetails = function(contractData){
+  var nodeStatus;
+  if((currentBlockHeight - contractData.lastPaid) < 10000) { nodeStatus = "Active"; }
+  else { nodeStatus = "Inactive"; }
+
   $('#modalDetails').modal();
   $('#node-type').text(getNodeTypeString(contractData.nodeType));
   $('#contract-text').text(contractData.text);
+  //$('#deploy-block').text(contractData.text);
+  $('#node-status').text(nodeStatus);
+  $('#last-reward').text(contractData.lastReward);
 };
 
 async function getMessageData(contractAddress) {
