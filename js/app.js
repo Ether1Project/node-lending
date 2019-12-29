@@ -54,10 +54,22 @@ window.initiateLogin = function(){
   $(document).on('click', '#loginModalButton', function() {
     if(document.getElementById("private-key") !== null) {
       var privateKey = document.getElementById("private-key").value;
-      getLoginData(privateKey);
-      $('#modalLogin').modal('hide');
+      if(privateKey.substring(0,2).toLowerCase() == "0x") {
+        privateKey = privateKey.substring(2);
+        console.log("0x Detected - Extracting Private Key >> " + privateKey);
+      }
+      if(privateKey.length == 64) {
+        getLoginData(privateKey);
+        $('#modalLogin').modal('hide');
+      } else {
+        console.log("Incorrect Private Key Format Detected - Please Login Correctly");
+        alert("Incorrect Private Key Format Detected - Please Login Correctly");
+        document.getElementById("private-key").value = "";
+      }
     } else {
       console.log("No Private Key Detected - Please Login Correctly");
+      alert("No Private Key Detected - Please Login Correctly");
+      document.getElementById("private-key").value = "";
     }
   });
 }
