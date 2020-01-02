@@ -318,7 +318,7 @@ function sortContractData(sortItem) {
   }
 }
 
-async function callLenderData() {
+function callLenderData() {
   if(typeof window.lenderContractDataArray[loginAddress] != 'undefined' && window.lenderContractDataArray[loginAddress] instanceof Array) {
     console.log("Lender Contract Count: " + window.lenderContractDataArray[loginAddress].length);
 
@@ -355,7 +355,7 @@ async function callLenderData() {
   }
 }
 
-async function callBorrowerData() {
+function callBorrowerData() {
   if(typeof window.borrowerContractDataArray[loginAddress] != 'undefined' && window.borrowerContractDataArray[loginAddress] instanceof Array) {
     console.log("Borrower Contract Count: " + window.borrowerContractDataArray[loginAddress].length);
     $('#borrower-data-table').children().not('#borrower-header1, #borrower-header2').remove();
