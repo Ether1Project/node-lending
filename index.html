@@ -217,6 +217,12 @@
 								<label data-error="wrong" data-success="right" for="node-type">Node Type:</label>
 								<div style="background-color: #ffffff;"><span id="node-type"></span></div>
 								<hr>
+								<label data-error="wrong" data-success="right" for="contract-address">Contract Address:</label>
+								<div style="background-color: #ffffff;"><span id="contract-address"></span></div>
+								<hr>
+								<label data-error="wrong" data-success="right" for="borrower-address">Borrower Address:</label>
+								<div style="background-color: #ffffff;"><span id="borrower-address"></span></div>
+								<hr>
 								<label data-error="wrong" data-success="right" for="deploy-block">Deployment Block Height:</label>
 								<div style="background-color: #ffffff;"><span id="deploy-block"></span></div>
 								<hr>
@@ -511,7 +517,7 @@
 									<li><b>3.</b> When Borrower's Ether-1 node produces its first reward payment within 50,000 blocks, contract status is changed from inactive to active. The contract status is changed back to inactive if the Borrower's node loses its paying status for a single payment period. Lender has the option to reset/remove an inactive contract between 50,000 and 199,999 blocks and collect Borrower’s origination fee.</li>
 									<li><b>4.</b> Lender can reset/remove an active contract after 200,000 blocks with the origination fee returned to the Borrower. Borrower can abandon an active contract after 200,000 blocks with the origination fee returned to the Borrower.</li>
 									<li><b>5.</b> If Borrower abandons an active contract within the first 200,000 blocks, security deposit is forfeited to the Lender.</li>
-									<li><b>6.</b> Lender can cancel an active contract only after 200,000 blocks, with the origination fee returned to the Borrower.</li>
+									<li><b>6.</b> Lender can cancel an active contract only after 200,000 blocks, with 95% of the origination fee returned to the Borrower.</li>
 									<li>&nbsp<b>-</b> Lender has the option to stipulate additional Terms and Conditions within each staking contract. By claiming the staking contract, Borrower agrees to Lender's additional Term and Conditions.</li>
 									<li>&nbsp<b>-</b> Lender's additional stipulated Terms and Conditions do not supersede Smart Contract rules (1) through (6) listed above.</li>
 								</ol>

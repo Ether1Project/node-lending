@@ -384,6 +384,11 @@ window.getContractDetails = async function(contractData){
   if((currentBlockHeight - contractData.lastPaid) < 10000) { nodeStatus = "Active"; }
   else { nodeStatus = "Inactive"; }
 
+  if(Number(deploymentBlockHeight) > 0) {
+      $('#borrower-address').text(contractData.borrowerAddress);
+  } else {
+      $('#borrower-address').text("No Borrower");
+  }
   $('#modalDetails').modal();
   $('#node-type').text(getNodeTypeString(contractData.nodeType));
   $('#contract-text').text(contractData.text);
@@ -393,6 +398,7 @@ window.getContractDetails = async function(contractData){
     blocksSinceDeployment = currentBlockHeight - deploymentBlockHeight;
   }
   $('#node-status').text(nodeStatus);
+  $('#contract-address').text(contractData.lendingContractAddress);
   $('#blocks-since').text(blocksSinceDeployment);
   var lastLenderReward = Number((Number(contractData.lastReward) / 1000000000000000000).toFixed(2) / 100 ) * Number(contractData.lenderSplit).toFixed(2);
   var lastBorrowerReward = Number((Number(contractData.lastReward) / 1000000000000000000).toFixed(2) / 100 ) * (100 - Number(contractData.lenderSplit)).toFixed(2);
