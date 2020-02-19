@@ -13,6 +13,11 @@ var loginPrivateKey;
 var loggedInFlag = false;
 var contractDataArray = [];
 var currentBlockHeight;
+var accountBalance = 0;
+var averageRate = 0;
+var totalLenderSplit = 0;
+var totalStaked = 0;
+
 window.mainContractDataArray = [];
 window.lenderContractDataArray = [];
 window.borrowerContractDataArray = [];
@@ -164,7 +169,10 @@ async function updateAccountBalance(loginAddress) {
   web3.eth.getBalance(loginAddress).then(
     function(response) {
       var balance = Number(response / 1000000000000000000).toFixed(2);
-      $('#login-account').text(loginAddress + "  Balance: " + balance);
+      accountBalance = balance;
+      $('#login-account').text(loginAddress + "  Balance: " + accountBalance + "  Total Staked: " + (totalStaked / 1000000000000000000).toFixed(0));
+      //$('#login-account').text(loginAddress + "  Balance: " + accountBalance + "  Total Staked: " + (totalStaked / 1000000000000000000).toFixed(0) + "  Average Lending Split: " + averageRate);
+      //$('#login-account').text(loginAddress + "  Balance: " + balance);
       console.log(loginAddress + "  Balance: " + response);
     }
   );
@@ -347,6 +355,13 @@ function callLenderData() {
         contractBorrowerAddress = window.lenderContractDataArray[loginAddress][i].borrowerAddress;
         $('#lender-data-table').append('<div class="row"><div class="cell" onclick="window.getContractDetails(window.lenderContractDataArray[\'' + loginAddress + '\'][' + i + ']);" data-title="Node Type"><i class="fa fa-info-circle"></i>' + contractNodeType +'</div><div class="cell" data-title="Last Paid">' + contractLastPaid + '</div><div class="cell" data-title="Lender Split">' + contractLenderSplit + '%</div><div class="cell" data-title="Contract Availability">' + contractAvailability + '</div><div class="cell" data-title="Borrower Address" style="padding-right: 15px;"><a href="https://explorer.ether1.org/address/' + contractBorrowerAddress + '" target="_blank">' + contractBorrowerAddress + '</a></div><div class="dropdown"><button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="font-size: 10px;">Options</button><div class="dropdown-menu" aria-labelledby="dropdownMenuButton" style="padding-left: 20%;"><button type="button" class="btn btn-warning" style="font-size: 10px; width:80%;" onclick="window.resetContractSetup(\'' + contractAddress + '\');">Reset</button><br><br><button type="button" class="btn btn-danger" style="font-size:10px;width:80%;" onclick="window.removeContractSetup(\'' + contractAddress + '\');">Remove</button><br><br><button type="button" class="btn btn-success" style="font-size: 10px; width:80%;" onclick="window.sendContractMessage(\'' + contractAddress + '\', \'Lender\');">Message</button></div></div><br></div>');
       }
+
+      averageRate = ((totalStaked / Number(contractCollateralAmount)) * Number(contractLenderSplit) / 100) + ((1 - (totalStaked / Number(contractCollateralAmount))) * totalLenderSplit);
+      totalLenderSplit += Number(contractLenderSplit) / 100;
+      totalStaked += Number(contractCollateralAmount);
+      $('#login-account').text(loginAddress + "  Balance: " + accountBalance + "  Total Staked: " + (totalStaked / 1000000000000000000).toFixed(0) + "  Average Lending Split: " + averageRate);
+      console.log(loginAddress + "  Balance: " + accountBalance + "  Total Staked: " + totalStaked + "  Average Lending Split: " + averageRate);
+
       console.log("Text: " + contractText + " Address: " + contractAddress + " Node Type: " + contractNodeType + " Borrower Address: " + contractBorrowerAddress + " Lender Split: " + contractLenderSplit + " Collateral Amount: " + contractCollateralAmount);
     }
   } else {
@@ -398,6 +413,7 @@ window.getContractDetails = async function(contractData){
   if(deploymentBlockHeight > 0) {
     blocksSinceDeployment = currentBlockHeight - deploymentBlockHeight;
   }
+  $('#original-origination-fee').text(contractData.originationFee);
   $('#node-status').text(nodeStatus);
   $('#contract-address').text(contractData.lendingContractAddress);
   $('#blocks-since').text(blocksSinceDeployment);
