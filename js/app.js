@@ -1,4 +1,5 @@
 const Web3 = require('web3');
+const BigNumber = require('bignumber.js');
 var web3 = new Web3('https://rpc.ether1.org');
 const CONTRACT_ADDRESS = '0x7eE5B10cad23D36F8Ba9AD30aD1B67A741f39769';
 const CONTROLLER_ADDRESS = '0x921b2bcEE3e6e413A81150bda671b2b47c6EF944';
@@ -560,10 +561,14 @@ async function selectContract(contractAddress) {
 }
 
 async function selectLendingContract(contractAddress, originationFee) {
+  let weiFee = new BigNumber(originationFee * 1000000000000000000);
+  console.log("Selecting Lending Contract - Address: " + contractAddress + " Fee: " + originationFee + "WEI Fee: " + weiFee.toString());
+  const bnValue = web3.utils.toBN(weiFee);
+  const sendValue = web3.utils.toHex(bnValue);
   const tx = {
     to: CONTRACT_ADDRESS,
     from: web3.eth.defaultAccount,
-    value: Number(originationFee * 1000000000000000000),
+    value: sendValue,
     gas: 6000000,
     data: contract.methods.borrowerContractSelection(contractAddress).encodeABI()
   };
@@ -585,6 +590,7 @@ async function selectLendingContract(contractAddress, originationFee) {
             $(".status").html("There Was A Problem With TX");
           }
         } else {
+          console.log("There was an error preparing TX");
           console.error(error);
         }
       });
