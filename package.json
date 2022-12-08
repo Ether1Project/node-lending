@@ -5,7 +5,7 @@
   "main": "app.js",
   "dependencies": {
     "browserify": "^16.5.0",
-    "web3": "^1.2.4"
+    "web3": "^1.8.1"
   },
   "devDependencies": {},
   "scripts": {

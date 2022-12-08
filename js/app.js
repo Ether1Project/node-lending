@@ -1,11 +1,20 @@
 const Web3 = require('web3');
 const BigNumber = require('bignumber.js');
-var web3 = new Web3('https://rpc.ethoprotocol.com');
-const CONTRACT_ADDRESS = '0x7eE5B10cad23D36F8Ba9AD30aD1B67A741f39769';
-const CONTROLLER_ADDRESS = '0x921b2bcEE3e6e413A81150bda671b2b47c6EF944';
+var web3 = new Web3('https://testnetrpc.ethoprotocol.com');
+// Addresses on the testnet
+const CONTRACT_ADDRESS = '0x90d07Fbb92E8A548E56C37062Bde5c415F620F26';
+const CONTROLLER_ADDRESS = '0x0ae4256a5fd5640e53f0774dc4A0A4fD851E9C67';
+const CHAINID = '27292';
+
+//const CONTRACT_ABI = JSON.parse('[{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"contractMessage","type":"string"},{"name":"messageSide","type":"string"}],"name":"addContractMessage","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"borrowerContractSelection","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"to","type":"address"},{"name":"value","type":"uint256"}],"name":"contractBorrowerTransfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"split","type":"uint256"},{"name":"nodeType","type":"string"},{"name":"fee","type":"uint256"},{"name":"contractText","type":"string"}],"name":"createLendingContract","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"removeContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"resetContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"setGnCollateralAmount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"setMnCollateralAmount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"setSnCollateralAmount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"borrowerCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"getContractCollateralAmount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"getContractLastPaid","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"getContractLastReward","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"gnCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lenderContractMessaging","outputs":[{"name":"lendingContractAddress","type":"address"},{"name":"message","type":"string"},{"name":"blockHeight","type":"uint256"},{"name":"side","type":"string"},{"name":"timestamp","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"lenderCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lendingContractCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lendingContractCountMapping","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"lendingContractMapping","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"originationFee","type":"uint256"},{"name":"available","type":"bool"},{"name":"lenderSplit","type":"uint256"},{"name":"text","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lendingContractsMappingByBorrower","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lendingContractsMappingByLender","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"messageCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"minOriginationFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"mnCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"snCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"totalContractMessages","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]');
+//const INDIVIDUAL_CONTRACT_ABI = JSON.parse('[{"constant":true,"inputs":[],"name":"borrowerDeploymentBlock","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"nodeType","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"available","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"borrowerTxAllowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"deleteContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"lenderSplit","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"borrower","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"resetContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"paymentThreshold","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"originationFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lastRewardAmount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lender","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"to","type":"address"},{"name":"value","type":"uint256"}],"name":"borrowerTransfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"lastPaid","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"newBorrower","type":"address"}],"name":"setBorrower","outputs":[{"name":"","type":"bool"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"nodeCollateralAmount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"controller","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"split","type":"uint256"},{"name":"contractType","type":"string"},{"name":"fee","type":"uint256"}],"payable":true,"stateMutability":"payable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":false,"name":"senderAddress","type":"address"}],"name":"logSender","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"receiverAddress","type":"address"}],"name":"logReceiver","type":"event"}]');
+//const CONTROLLER_ABI = JSON.parse('[{"inputs":[{"name":"lendingContractAddress","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"constant":true,"inputs":[],"name":"getLendingContractData","outputs":[{"components":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"originationFee","type":"uint256"},{"name":"available","type":"bool"},{"name":"lenderSplit","type":"uint256"},{"name":"text","type":"string"},{"name":"collateralAmount","type":"uint256"},{"name":"lastPaid","type":"uint256"},{"name":"lastReward","type":"uint256"},{"name":"deploymentBlock","type":"uint256"}],"name":"","type":"tuple[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lenderManagementContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"}]');
+
+
 const CONTRACT_ABI = JSON.parse('[{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"contractMessage","type":"string"},{"name":"messageSide","type":"string"}],"name":"addContractMessage","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"borrowerContractSelection","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"to","type":"address"},{"name":"value","type":"uint256"}],"name":"contractBorrowerTransfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"split","type":"uint256"},{"name":"nodeType","type":"string"},{"name":"fee","type":"uint256"},{"name":"contractText","type":"string"}],"name":"createLendingContract","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"removeContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"resetContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"setGnCollateralAmount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"setMnCollateralAmount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"setSnCollateralAmount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"borrowerCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"getContractCollateralAmount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"getContractLastPaid","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"getContractLastReward","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"gnCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lenderContractMessaging","outputs":[{"name":"lendingContractAddress","type":"address"},{"name":"message","type":"string"},{"name":"blockHeight","type":"uint256"},{"name":"side","type":"string"},{"name":"timestamp","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"lenderCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lendingContractCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lendingContractCountMapping","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"lendingContractMapping","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"originationFee","type":"uint256"},{"name":"available","type":"bool"},{"name":"lenderSplit","type":"uint256"},{"name":"text","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lendingContractsMappingByBorrower","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lendingContractsMappingByLender","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"messageCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"minOriginationFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"mnCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"snCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"totalContractMessages","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]');
 const INDIVIDUAL_CONTRACT_ABI = JSON.parse('[{"constant":true,"inputs":[],"name":"borrowerDeploymentBlock","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"nodeType","outputs":[{"name":"","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"available","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"borrowerTxAllowance","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"deleteContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"lenderSplit","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"borrower","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[],"name":"resetContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"paymentThreshold","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"originationFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lastRewardAmount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lender","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"to","type":"address"},{"name":"value","type":"uint256"}],"name":"borrowerTransfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":true,"inputs":[],"name":"lastPaid","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":false,"inputs":[{"name":"newBorrower","type":"address"}],"name":"setBorrower","outputs":[{"name":"","type":"bool"}],"payable":true,"stateMutability":"payable","type":"function"},{"constant":true,"inputs":[],"name":"nodeCollateralAmount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"controller","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"split","type":"uint256"},{"name":"contractType","type":"string"},{"name":"fee","type":"uint256"}],"payable":true,"stateMutability":"payable","type":"constructor"},{"payable":true,"stateMutability":"payable","type":"fallback"},{"anonymous":false,"inputs":[{"indexed":false,"name":"senderAddress","type":"address"}],"name":"logSender","type":"event"},{"anonymous":false,"inputs":[{"indexed":false,"name":"receiverAddress","type":"address"}],"name":"logReceiver","type":"event"}]');
-const CONTROLLER_ABI = JSON.parse('[{"inputs":[{"name":"lendingContractAddress","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"constant":true,"inputs":[],"name":"getLendingContractData","outputs":[{"components":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"originationFee","type":"uint256"},{"name":"available","type":"bool"},{"name":"lenderSplit","type":"uint256"},{"name":"text","type":"string"},{"name":"collateralAmount","type":"uint256"},{"name":"lastPaid","type":"uint256"},{"name":"lastReward","type":"uint256"},{"name":"deploymentBlock","type":"uint256"}],"name":"","type":"tuple[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lenderManagementContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"}]');
+const CONTROLLER_ABI = JSON.parse('[{"constant":true,"inputs":[],"name":"getLendingContractData","outputs":[{"components":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"originationFee","type":"uint256"},{"name":"available","type":"bool"},{"name":"lenderSplit","type":"uint256"},{"name":"text","type":"string"},{"name":"collateralAmount","type":"uint256"},{"name":"lastPaid","type":"uint256"},{"name":"lastReward","type":"uint256"},{"name":"deploymentBlock","type":"uint256"}],"name":"","type":"tuple[]"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lenderManagementContract","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"inputs":[{"name":"lendingContractAddress","type":"address"}],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"contractMessage","type":"string"},{"name":"messageSide","type":"string"}],"name":"addContractMessage","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"borrowerContractSelection","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"},{"name":"to","type":"address"},{"name":"value","type":"uint256"}],"name":"contractBorrowerTransfer","outputs":[{"name":"","type":"bool"}],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"split","type":"uint256"},{"name":"nodeType","type":"string"},{"name":"fee","type":"uint256"},{"name":"contractText","type":"string"}],"name":"createLendingContract","outputs":[],"payable":true,"stateMutability":"payable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"removeContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"contractAddress","type":"address"}],"name":"resetContract","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"setGnCollateralAmount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"setMnCollateralAmount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"constant":false,"inputs":[{"name":"amount","type":"uint256"}],"name":"setSnCollateralAmount","outputs":[],"payable":false,"stateMutability":"nonpayable","type":"function"},{"inputs":[],"payable":false,"stateMutability":"nonpayable","type":"constructor"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"borrowerCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"getContractCollateralAmount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"getContractLastPaid","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"getContractLastReward","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"gnCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lenderContractMessaging","outputs":[{"name":"lendingContractAddress","type":"address"},{"name":"message","type":"string"},{"name":"blockHeight","type":"uint256"},{"name":"side","type":"string"},{"name":"timestamp","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"lenderCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"lendingContractCount","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"uint256"}],"name":"lendingContractCountMapping","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"lendingContractMapping","outputs":[{"name":"nodeType","type":"string"},{"name":"index","type":"uint256"},{"name":"lenderIndex","type":"uint256"},{"name":"borrowerIndex","type":"uint256"},{"name":"lenderAddress","type":"address"},{"name":"borrowerAddress","type":"address"},{"name":"lendingContractAddress","type":"address"},{"name":"originationFee","type":"uint256"},{"name":"available","type":"bool"},{"name":"lenderSplit","type":"uint256"},{"name":"text","type":"string"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lendingContractsMappingByBorrower","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"},{"name":"","type":"uint256"}],"name":"lendingContractsMappingByLender","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"","type":"address"}],"name":"messageCountMapping","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"minOriginationFee","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"mnCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"owner","outputs":[{"name":"","type":"address"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[],"name":"snCollateralRequirement","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"},{"constant":true,"inputs":[{"name":"contractAddress","type":"address"}],"name":"totalContractMessages","outputs":[{"name":"","type":"uint256"}],"payable":false,"stateMutability":"view","type":"function"}]');
+
 var contract;
 var controllerContract;
 var loginAddress;
@@ -17,6 +26,8 @@ var accountBalance = 0;
 var averageRate = 0;
 var totalLenderSplit = 0;
 var totalStaked = 0;
+
+let ETHO_SN_COLLATERAL=5000;
 
 window.mainContractDataArray = [];
 window.lenderContractDataArray = [];
@@ -55,52 +66,91 @@ function updateDataLoadingProgress(percent) {
   }
   $bar.text(Math.round(newWidth/5) + "%");
 }
-window.initiateLogin = function(){
-  $('#modalLogin').modal();
-  $(document).on('click', '#loginModalButton', function() {
-    if(document.getElementById("private-key") !== null) {
-      var privateKey = document.getElementById("private-key").value;
-      if(privateKey.substring(0,2).toLowerCase() == "0x") {
-        privateKey = privateKey.substring(2);
-        console.log("0x Detected - Extracting Private Key >> " + privateKey);
-      }
-      if(privateKey.length == 64) {
-        getLoginData(privateKey);
-        $('#modalLogin').modal('hide');
-      } else {
-        console.log("Incorrect Private Key Format Detected - Please Login Correctly");
-        alert("Incorrect Private Key Format Detected - Please Login Correctly");
-        document.getElementById("private-key").value = "";
-      }
-    } else {
-      console.log("No Private Key Detected - Please Login Correctly");
-      alert("No Private Key Detected - Please Login Correctly");
-      document.getElementById("private-key").value = "";
-    }
-  });
+
+
+window.initiateLogin = async function(){
+    let account;
+    ethereum.request({
+      method: 'wallet_switchEthereumChain',
+      params: [{ chainId: web3.utils.toHex(CHAINID) }],
+    })
+      .then(() => console.log('ETHOnetwork has been set'))
+      .catch((e) => {
+        if (e.code === 4902) {
+          console.log('network is not available, add it')
+        } else {
+          console.log('could not set network')
+        }
+      })
+    const chainId = await ethereum.request({ method: 'eth_chainId' });
+    console.log(chainId);
+    ethereum.request({method: 'eth_requestAccounts'}).then(accounts => {
+      console.log(accounts.length);
+      account = accounts[0];
+      console.log(account);
+      ethereum.request({method: 'eth_getBalance', params: [account, 'latest']}).then(result => {
+        console.log(result);
+        let wei = parseInt(result, 16);
+        let balance = wei / (10 ** 18);
+        console.log(balance + " ETH");
+        let bu = "" + account + ":" + balance;
+    
+        $("#connect-button").html(bu);
+        getLoginData(account);
+      });
+    });
+    
+  //   $('#modalLogin').modal();
+  // $(document).on('click', '#loginModalButton', function() {
+  //   if(document.getElementById("private-key") !== null) {
+  //     var privateKey = document.getElementById("private-key").value;
+  //     if(privateKey.substring(0,2).toLowerCase() == "0x") {
+  //       privateKey = privateKey.substring(2);
+  //       console.log("0x Detected - Extracting Private Key >> " + privateKey);
+  //     }
+  //     if(privateKey.length == 64) {
+  //       getLoginData(privateKey);
+  //       $('#modalLogin').modal('hide');
+  //     } else {
+  //       console.log("Incorrect Private Key Format Detected - Please Login Correctly");
+  //       alert("Incorrect Private Key Format Detected - Please Login Correctly");
+  //       document.getElementById("private-key").value = "";
+  //     }
+  //   } else {
+  //     console.log("No Private Key Detected - Please Login Correctly");
+  //     alert("No Private Key Detected - Please Login Correctly");
+  //     document.getElementById("private-key").value = "";
+  //   }
+  // });
 }
 
 async function callContract(){
   try{
+  contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
+  console.log("Contract: %s", CONTRACT_ADDRESS);
+  console.log(contract);
+  controllerContract = new web3.eth.Contract(CONTROLLER_ABI, CONTROLLER_ADDRESS);
+  console.log(controllerContract);
   currentBlockHeight = await web3.eth.getBlockNumber();
   console.log("CurrentBlockHeight");
   console.log(currentBlockHeight);
-  contract = new web3.eth.Contract(CONTRACT_ABI, CONTRACT_ADDRESS);
-  controllerContract = new web3.eth.Contract(CONTROLLER_ABI, CONTROLLER_ADDRESS);
-  currentBlockHeight = await web3.eth.getBlockNumber();
-  const contractMapping = await controllerContract.methods.getLendingContractData().call()
+  const contractMapping = await controllerContract.methods.getLendingContractData().call().catch((err) => {
+      console.log(err);
+      return;
+    });
+  console.log(contractMapping);
   const totalContractCount = await contract.methods.lendingContractCount().call()
   console.log("Total Contract Count: " + totalContractCount);
   console.log("Current Block Height: " + currentBlockHeight);
-
+  
   if(totalContractCount > 0) {
-    showDataLoadingProgress();
-    setTimeout(() => {
-      callData();
-    }, 2000);
+     showDataLoadingProgress();
+     setTimeout(() => {
+       callData();
+     }, 2000);
   }
   async function callData(){
-    callContractData(await contract, await totalContractCount, await contractMapping);
+     callContractData(await contract, await totalContractCount, await contractMapping);
   }
   $('#lender-data-table').children().not('#lender-header1, #lender-header2').remove();
   $('#lender-data-table').append('<div class="row"><div class="cell" data-title="Node Type">No Lender Data Found</div></div>');
@@ -150,14 +200,12 @@ async function loadUserContractData(){
   }
 }
 
-function getLoginData(privateKey) {
-  loginPrivateKey = '0x' + privateKey;
-  let account = web3.eth.accounts.privateKeyToAccount(loginPrivateKey);
-  web3.eth.accounts.wallet.add(account);
-  web3.eth.defaultAccount = account.address;
-  loginAddress = account.address;
+function getLoginData(account) {
+  console.log("Addr: %s", account);
+//  web3.eth.accounts.wallet.add(account);
+  web3.eth.defaultAccount = account;
+  loginAddress = account;
   loggedInFlag = true;
-  console.log("Login Private Key: " + loginPrivateKey + " Login Address: " + loginAddress);
   updateAccountBalance(loginAddress);
 
   $("#add-contract-button").css('display', 'inherit');
@@ -327,6 +375,7 @@ function sortContractData(sortItem) {
 }
 
 function callLenderData() {
+  console.log("callLenderData()");
   if(typeof window.lenderContractDataArray[loginAddress] != 'undefined' && window.lenderContractDataArray[loginAddress] instanceof Array) {
     console.log("Lender Contract Count: " + window.lenderContractDataArray[loginAddress].length);
 
@@ -393,6 +442,7 @@ function callBorrowerData() {
 }
 
 window.getContractDetails = async function(contractData){
+  console.log("window.getContractDetails");
   var individualContract = new web3.eth.Contract(INDIVIDUAL_CONTRACT_ABI, contractData.lendingContractAddress);
   const deploymentBlockHeight = await individualContract.methods.borrowerDeploymentBlock().call();
 
@@ -480,19 +530,20 @@ async function sendMessage(contractAddress, message, side) {
 }
 
 window.newLendingContractSetup = function(){
+  console.log("window.newLendingContractSetup")
   $('#modalNewContractSetup').modal();
   var nodeType = document.getElementById("node-type-selection").value;
   var ethoCollateralAmount;
   if(nodeType == "GN") { ethoCollateralAmount = 30000; }
   else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
-  else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
+  else if(nodeType == "SN") { ethoCollateralAmount = ETHO_SN_COLLATERAL; }
   $('#required-collateral').text(ethoCollateralAmount);
 
   $('#node-type-selection').unbind('change').click(function(event) {
     nodeType = document.getElementById("node-type-selection").value;
     if(nodeType == "GN") { ethoCollateralAmount = 30000; }
     else if(nodeType == "MN") { ethoCollateralAmount = 15000; }
-    else if(nodeType == "SN") { ethoCollateralAmount = 5000; }
+    else if(nodeType == "SN") { ethoCollateralAmount = ETHO_SN_COLLATERAL; }
     $('#required-collateral').text(ethoCollateralAmount);
   });
   $('#submitNewContractButton').unbind('click').click(function(event) {
@@ -502,6 +553,7 @@ window.newLendingContractSetup = function(){
 };
 
 async function newLendingContract() {
+  console.log("newLendingContract()");
   var split = document.getElementById("split-value-selection").value;
   var nodeType = document.getElementById("node-type-selection").value;
   var fee = document.getElementById("fee-selection").value;
@@ -509,33 +561,35 @@ async function newLendingContract() {
 
   const nodeCollateralAmount = getCollateralAmount(nodeType);
   const tx = {
-    to: CONTRACT_ADDRESS,
     from: web3.eth.defaultAccount,
+    to: CONTRACT_ADDRESS,
     value: nodeCollateralAmount,
-    gas: 6000000,
+    gasPrice: '0x0184e72a000', // customizable by user during MetaMask confirmation.
+    gas: '0x81000', // customizable by user during MetaMask confirmation.
+  
     data: contract.methods.createLendingContract(split, nodeType, fee, text).encodeABI()
   };
-
-  web3.eth.accounts.signTransaction(tx, loginPrivateKey)
-    .then(function(signedTransactionData) {
-      web3.eth.sendSignedTransaction(signedTransactionData.rawTransaction, function(error, result) {
-        if(!error) {
-          if(result) {
-            $('#minedBlockTrackerModal').modal();
-            waitForReceipt(result, function(receipt) {
-              console.log("Tx Has Been Mined: " + receipt);
-              $(".status").html("TX Has Been Mined");
-              $('#minedBlockTrackerModal').modal('hide');
-              refreshContractData();
-            });
-          } else {
-            console.log("There Was A Problem With TX");
-            $(".status").html("There Was A Problem With TX");
-          }
-        } else {
-          console.error(error);
-        }
-      });
+  console.log(tx);
+  $('#minedBlockTrackerModal').modal();
+  
+  ethereum
+    .request({
+      method: 'eth_sendTransaction',
+      params: [tx],
+    })
+    .then((result) => {
+      // The result varies by RPC method.
+      // For example, this method will return a transaction hash hexadecimal string on success.
+        console.log("Tx Has Been Mined: " + result);
+        $(".status").html("TX Has Been Mined");
+        $('#minedBlockTrackerModal').modal('hide');
+        refreshContractData();
+    })
+    .catch((error) => {
+      // If the request fails, the Promise will reject with an error.
+      console.log("There Was A Problem With TX: %s",error);
+      $(".status").html("There Was A Problem With TX");
+  
     });
 }
 
@@ -561,6 +615,7 @@ async function selectContract(contractAddress) {
 }
 
 async function selectLendingContract(contractAddress, originationFee) {
+  console.log("selectLendingContract()");
   let weiFee = new BigNumber(originationFee * 1000000000000000000);
   console.log("Selecting Lending Contract - Address: " + contractAddress + " Fee: " + originationFee + "WEI Fee: " + weiFee.toString());
   const bnValue = web3.utils.toBN(weiFee);
@@ -621,7 +676,9 @@ async function resetContract(contractAddress, side) {
       resetLendingContract(contractAddress);
   });
 }
+
 async function resetLendingContract(contractAddress) {
+  console.log("resetLendingContract()");
   const tx = {
     to: CONTRACT_ADDRESS,
     from: web3.eth.defaultAccount,
@@ -778,10 +835,10 @@ function getCollateralAmount(nodeType) {
   } else if(nodeType == "MN") {
     ethoValue = 15000;
   } else if(nodeType == "SN") {
-    ethoValue = 5000;
+    ethoValue = ETHO_SN_COLLATERAL;
   }
   var weiValue = web3.utils.toWei(ethoValue.toString(), 'ether')
-  return web3.utils.toBN(weiValue);
+  return web3.utils.toHex(weiValue);
 }
 
 function getNodeTypeString(nodeType) {

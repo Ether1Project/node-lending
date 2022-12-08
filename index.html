@@ -2,11 +2,11 @@
 <html lang="en">
 
 <head>
-	<title>Ether-1 Staking Market/Node Lending Dashboard</title>
+	<title>Etho Protocol - Node Lending Dashboard</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!--===============================================================================================-->
-	<link rel="icon" type="image/png" href="https://ether1.org/images/icon.png" />
+	<link rel="icon" type="image/png" href="images/etho.png" />
 	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
 	<!--===============================================================================================-->
@@ -22,6 +22,8 @@
 	<link rel="stylesheet" type="text/css" href="css/main.css">
 
 	<!--===============================================================================================-->
+
+
 </head>
 
 <body>
@@ -31,7 +33,7 @@
 			<div class="wrap-table100" style="background: url('images/background.png') no-repeat fixed center; background-size: contain;">
 				<div class="row header">
 					<div class="cell" style="width: 500px; height: 100px; background-color: #362f31;">
-						<img src="https://raw.githubusercontent.com/Ether1Project/Ether-1-Branding/master/PNG%20Logos/ethofsstakingdark.png"></img>
+						<img height="100" width="100" src="images/etho.png"></img>
 						<h3 style="padding: 15px;">Staking Market (Beta Testing)</h3>
 						<h4 style="font-size: 18px;"><span id="total-lending"></span></h4>
 						<h4 style="font-size: 18px;"><span id="total-available"></span></h4>
@@ -41,8 +43,9 @@
 				</div><br>
 
 				<div class="cell" style="float: right; padding-right: 10px; padding-left: 10px;">
-					<button type="button" class="btn btn-primary" onclick="window.initiateLogin();">Login</button>
+					<button type="button" class="btn btn-primary" id="connect-button" onclick="window.initiateLogin();">Select account</button>
 				</div>
+
 				<div class="cell" style="float: right; padding-right: 10px; padding-left: 10px;">
 					<button type="button" class="btn btn-primary" id="terms-button">Terms</button>
 				</div>
@@ -339,7 +342,7 @@
 			<div class="modal-content">
 				<!--Header-->
 				<div class="modal-header">
-					<h4 class="modal-title" id="minedBlockTrackerModalTitle">Ether-1 Transaction Tracker</h4>
+					<h4 class="modal-title" id="minedBlockTrackerModalTitle">Etho Protocol Transaction Tracker</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">×</span>
 					</button>
@@ -351,7 +354,7 @@
 						<tbody>
 							<div class="md-form mb-5">
 								<br>
-								<h4 class="modal-title" style="font-size: 20px;">Ether-1 Transaction Status: <span id="status" style="color: #9c2877; font-weight: bold;">In Progress</span></h4>
+								<h4 class="modal-title" style="font-size: 20px;">Etho Protocol Transaction Status: <span id="status" style="color: #9c2877; font-weight: bold;">In Progress</span></h4>
 								<h4 class="modal-title" style="font-size: 20px;">Waiting For Transaction Confirmation</h4>
 							</div>
 						</tbody>
@@ -372,7 +375,7 @@
 			<div class="modal-content">
 				<!--Header-->
 				<div class="modal-header">
-					<h4 class="modal-title" id="costConfirmationModalTitle">Ether-1 Transaction Cost Confirmation</h4>
+					<h4 class="modal-title" id="costConfirmationModalTitle">Etho Protocol Transaction Cost Confirmation</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">×</span>
 					</button>
@@ -406,7 +409,7 @@
 			<div class="modal-content">
 				<!--Header-->
 				<div class="modal-header">
-					<h4 class="modal-title" id="confirmationModalTitle">Ether-1 Transaction Confirmation</h4>
+					<h4 class="modal-title" id="confirmationModalTitle">Etho Protocol Transaction Confirmation</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">×</span>
 					</button>
@@ -440,7 +443,7 @@
 			<div class="modal-content">
 				<!--Header-->
 				<div class="modal-header">
-					<h4 class="modal-title" id="helpModalTitle">Ether-1 Staking/Lending Help</h4>
+					<h4 class="modal-title" id="helpModalTitle">Etho Protocol Staking/Lending Help</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">×</span>
 					</button>
@@ -499,7 +502,7 @@
 			<div class="modal-content">
 				<!--Header-->
 				<div class="modal-header">
-					<h4 class="modal-title" id="termsModalTitle">Ether-1 Staking/Lending Terms & Conditions</h4>
+					<h4 class="modal-title" id="termsModalTitle">Etho Protocol Staking/Lending Terms & Conditions</h4>
 					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
 						<span aria-hidden="true">×</span>
 					</button>
@@ -515,9 +518,9 @@
 								<hr>
 								<ol>
 									<li><b>1.</b> Borrower and Lender both agree they understand and consent to the terms and conditions below upon entering their private keys on this website.</li>
-									<li><b>2.</b> After claiming an available staking contract, Borrower has 50,000 blocks to setup an active and paying Ether-1 node using Lender's smart contract stake. Failure to do so gives Lender the option to collect Borrower's origination fee.
+									<li><b>2.</b> After claiming an available staking contract, Borrower has 50,000 blocks to setup an active and paying Etho Protocol node using Lender's smart contract stake. Failure to do so gives Lender the option to collect Borrower's origination fee.
 									</li>
-									<li><b>3.</b> When Borrower's Ether-1 node produces its first reward payment within 50,000 blocks, contract status is changed from inactive to active. The contract status is changed back to inactive if the Borrower's node loses its paying status for a single payment period. Lender has the option to reset/remove an inactive contract between 50,000 and 199,999 blocks and collect Borrower’s origination fee.</li>
+									<li><b>3.</b> When Borrower's Etho Protocol node produces its first reward payment within 50,000 blocks, contract status is changed from inactive to active. The contract status is changed back to inactive if the Borrower's node loses its paying status for a single payment period. Lender has the option to reset/remove an inactive contract between 50,000 and 199,999 blocks and collect Borrower’s origination fee.</li>
 									<li><b>4.</b> Lender can reset/remove an active contract after 200,000 blocks with the origination fee returned to the Borrower. Borrower can abandon an active contract after 200,000 blocks with the origination fee returned to the Borrower.</li>
 									<li><b>5.</b> If Borrower abandons an active contract within the first 200,000 blocks, security deposit is forfeited to the Lender.</li>
 									<li><b>6.</b> Lender can cancel an active contract only after 200,000 blocks, with 95% of the origination fee returned to the Borrower.</li>
@@ -595,6 +598,7 @@
 								</select>
 								<label data-error="wrong" data-success="right" for="node-type">Select Desired Origination Fee</label>
 								<select class="selectpicker form-control" data-style="btn-primary" id="fee-selection">
+									<option value="100">100 ETHO</option>
 									<option value="150">150 ETHO</option>
 									<option value="200">200 ETHO</option>
 									<option value="500">500 ETHO</option>
